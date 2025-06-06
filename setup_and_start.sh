@@ -79,25 +79,27 @@ setup_environment() {
         echo -e "VITE_API_URL=http://localhost:3001" >> frontend/.env
     fi
     
+    echo -e "SUPABASE_URL=$(grep SUPABASE_URL .env | cut -d '=' -f2)" > backend/.env
+    echo -e "SUPABASE_SERVICE_ROLE_KEY=$(grep SUPABASE_SERVICE_KEY .env | cut -d '=' -f2)" >> backend/.env
+    echo -e "PAYPAL_CLIENT_ID=$(grep PAYPAL_CLIENT_ID .env | cut -d '=' -f2)" >> backend/.env
+    echo -e "PAYPAL_CLIENT_SECRET=$(grep PAYPAL_CLIENT_SECRET .env | cut -d '=' -f2)" >> backend/.env
+    echo -e "FRONTEND_URL=http://localhost:5173" >> backend/.env
+    
     echo -e "${GREEN}✅ Environment variables set up successfully${NC}"
 }
 
 # Start development servers
 start_servers() {
     echo -e "${YELLOW}Starting backend server...${NC}"
-    cd backend
-    npm run dev &
+    npm run dev:backend &
     BACKEND_PID=$!
-    cd ..
     
     # Wait for backend to start
     sleep 3
     
     echo -e "${YELLOW}Starting frontend development server...${NC}"
-    cd frontend
-    npm run dev &
+    npm run dev:frontend &
     FRONTEND_PID=$!
-    cd ..
     
     echo -e "${GREEN}✅ Development servers started!${NC}"
     echo -e "${BLUE}Backend running at: ${BOLD}http://localhost:3001${NC}"
