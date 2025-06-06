@@ -1,16 +1,16 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { SupabaseProvider } from './src/contexts/SupabaseContext';
-import AuthGuard from './src/components/AuthGuard';
+import { SupabaseProvider } from './contexts/SupabaseContext';
+import AuthGuard from './components/AuthGuard';
 
 // Pages
-import Home from './src/pages/Home';
-import Login from './src/pages/Login';
-import Dashboard from './src/pages/Dashboard';
-import SessionDetail from './src/pages/SessionDetail';
-import Preview from './src/pages/Preview';
-import Download from './src/pages/Download';
-import NotFound from './src/pages/NotFound';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import SessionDetail from './pages/SessionDetail';
+import Preview from './pages/Preview';
+import Download from './pages/Download';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
