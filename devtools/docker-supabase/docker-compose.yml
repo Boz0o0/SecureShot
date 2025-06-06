@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: supabase
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  supabase-auth:
+    image: supabase/gotrue:latest
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://postgres:postgres@postgres:5432/supabase?sslmode=disable
+      GOTRUE_SITE_URL: http://localhost:3000
+      GOTRUE_URI_ALLOW_LIST: http://localhost:3000
+      GOTRUE_JWT_SECRET: your-jwt-secret-key
+      GOTRUE_JWT_EXP: 3600
+    ports:
+      - "9999:9999"
+    depends_on:
+      - postgres
+
+  supabase-storage:
+    image: supabase/storage-api:latest
+    environment:
+      ANON_KEY: your-anon-key
+      SERVICE_KEY: your-service-key
+      POSTGREST_URL: http://postgrest:3000
+      PGRST_JWT_SECRET: your-jwt-secret-key
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/supabase
+      FILE_SIZE_LIMIT: 52428800
+      STORAGE_BACKEND: file
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    volumes:
+      - storage_data:/var/lib/storage
+
+  postgrest:
+    image: postgrest/postgrest:latest
+    environment:
+      PGRST_DB_URI: postgres://postgres:postgres@postgres:5432/supabase
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: your-jwt-secret-key
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  storage_data:
