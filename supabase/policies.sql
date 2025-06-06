@@ -1,7 +1,21 @@
--- Enable RLS
+-- Enable RLS on tables
 ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE photos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE purchases ENABLE ROW LEVEL SECURITY;
+ALTER TABLE email_logs ENABLE ROW LEVEL SECURITY;
+
+-- Policy to allow service role to insert logs in email_logs
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE policyname = 'Allow service to insert logs' AND tablename = 'email_logs'
+  ) THEN
+    CREATE POLICY "Allow service to insert logs"
+    ON email_logs
+    FOR INSERT
+    WITH CHECK (auth.role() = 'service_role');
+  END IF;
+END $$;
 
 -- Sessions table: Only allow photographers to manage their sessions
 DO $$
