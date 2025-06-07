@@ -3,11 +3,37 @@ import { useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import supabase from '../services/supabaseClient';
 
+const navButtonStyle = {
+  padding: '0.5rem 1rem',
+  fontSize: '0.95rem',
+  background: 'none',
+  border: '1px solid #6366f1',
+  color: '#6366f1',
+  borderRadius: '0.5rem',
+  cursor: 'pointer',
+};
+
 export default function HomePage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #0f0f0f, #1f2937)',
+          color: '#fff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: 'system-ui, sans-serif',
+        }}
+      >
+        Chargement...
+      </div>
+    );
+  }
 
   return (
     <div style={{ position: 'relative', zIndex: 0, fontFamily: 'system-ui, sans-serif' }}>
@@ -80,33 +106,10 @@ export default function HomePage() {
       >
         {!user ? (
           <>
-            <button
-              onClick={() => navigate('/register')}
-              style={{
-                padding: '0.5rem 1rem',
-                fontSize: '0.95rem',
-                background: 'none',
-                border: '1px solid #6366f1',
-                color: '#6366f1',
-                borderRadius: '0.5rem',
-                cursor: 'pointer',
-              }}
-            >
+            <button onClick={() => navigate('/register')} style={navButtonStyle}>
               Créer un compte
             </button>
-
-            <button
-              onClick={() => navigate('/login')}
-              style={{
-                padding: '0.5rem 1rem',
-                fontSize: '0.95rem',
-                background: 'none',
-                border: '1px solid #6366f1',
-                color: '#6366f1',
-                borderRadius: '0.5rem',
-                cursor: 'pointer',
-              }}
-            >
+            <button onClick={() => navigate('/login')} style={navButtonStyle}>
               Connexion
             </button>
           </>
@@ -136,7 +139,7 @@ export default function HomePage() {
         </p>
 
         <button
-          onClick={() => navigate(user ? '/checkout' : '/login')}
+          onClick={() => navigate(user ? '/gallery' : '/login')}
           style={{
             padding: '1rem 2rem',
             fontSize: '1.1rem',
@@ -150,7 +153,7 @@ export default function HomePage() {
             transition: 'all 0.3s ease',
           }}
         >
-          Accéder au paiement
+          Accéder à la galerie
         </button>
       </div>
 
@@ -172,7 +175,6 @@ export default function HomePage() {
   );
 }
 
-// 👤 Menu utilisateur
 function UserMenu() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -221,6 +223,15 @@ function UserMenu() {
             style={menuItemStyle}
           >
             Paramètres
+          </button>
+          <button
+            onClick={() => {
+              setOpen(false);
+              navigate('/dashboard');
+            }}
+            style={menuItemStyle}
+          >
+            Dashboard
           </button>
           <button
             onClick={handleLogout}

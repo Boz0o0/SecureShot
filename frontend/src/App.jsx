@@ -4,6 +4,9 @@ import CheckoutPage from './pages/CheckoutPage';
 import PaymentSuccess from './pages/PaymentSuccess';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
+import GaleryPage from './pages/GaleryPage';
+import DashboardPage from './pages/DashboardPage';
+import UpladPage from './pages/UploadPage';
 
 export default function App() {
   return (
@@ -14,6 +17,9 @@ export default function App() {
         <Route path="/payment/success" element={<PaymentSuccess />} />
         <Route path='/register' element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/gallery" element={<GaleryPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/upload" element={<UpladPage />} />
       </Routes>
     </Router>
   );
