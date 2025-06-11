@@ -21,7 +21,30 @@ export default function GalleryPage() {
   const fetchPhotos = async () => {
     let query = supabase
       .from('photos')
-      .select('*'); // <-- tout sélectionner temporairement pour debug
+      .select('id, storage_path, description, uploader_username, price, created_at');
+
+    // Appliquer recherche si search non vide
+    if (search.trim() !== '') {
+      query = query.or(`description.ilike.%${search}%,uploader_username.ilike.%${search}%`);
+    }
+
+    // Appliquer tri
+    switch (sortBy) {
+      case 'date_asc':
+        query = query.order('created_at', { ascending: true });
+        break;
+      case 'date_desc':
+        query = query.order('created_at', { ascending: false });
+        break;
+      case 'name_asc':
+        query = query.order('description', { ascending: true });
+        break;
+      case 'name_desc':
+        query = query.order('description', { ascending: false });
+        break;
+      default:
+        query = query.order('created_at', { ascending: false });
+    }
 
     const { data, error } = await query;
 
@@ -29,16 +52,15 @@ export default function GalleryPage() {
       console.error('❌ Erreur Supabase :', error.message);
       alert('Erreur Supabase : ' + error.message);
     } else {
-      console.log('✅ Données photos :', data);
       setPhotos(data);
     }
   };
-
 
   if (loading || !user) return null;
 
   return (
     <div style={{ position: 'relative', zIndex: 0, fontFamily: 'system-ui, sans-serif' }}>
+      {/* Background */}
       <div
         style={{
           position: 'fixed',
@@ -95,14 +117,13 @@ export default function GalleryPage() {
           <option value="date_asc">📅 Anciennes</option>
           <option value="name_asc">🔤 A-Z</option>
           <option value="name_desc">🔤 Z-A</option>
-          <option value="popularity">🔥 Populaires</option>
         </select>
       </div>
 
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
           gap: '1.5rem',
           maxWidth: '1200px',
           margin: '0 auto',
@@ -118,6 +139,7 @@ export default function GalleryPage() {
               overflow: 'hidden',
               padding: '1rem',
               border: '1px solid #334155',
+              color: 'white',
             }}
           >
             <img
@@ -125,8 +147,17 @@ export default function GalleryPage() {
               alt={photo.description}
               style={{ width: '100%', height: 'auto', borderRadius: '0.5rem' }}
             />
-            <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#cbd5e1' }}>
+            <p style={{ marginTop: '0.5rem', fontSize: '0.95rem' }}>
               {photo.description || 'Aucune description'}
+            </p>
+            <p style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
+              📸 Photographe : <strong>{photo.uploader_username}</strong>
+            </p>
+            <p style={{ fontSize: '0.85rem', color: '#facc15' }}>
+              💰 Prix : {photo.price?.toFixed(2)} €
+            </p>
+            <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              🕒 {new Date(photo.created_at).toLocaleString()}
             </p>
           </div>
         ))}

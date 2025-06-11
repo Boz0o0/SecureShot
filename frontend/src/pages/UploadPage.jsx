@@ -7,6 +7,7 @@ import '../styles/pages/UploadPage.css';
 export default function UploadPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
@@ -14,11 +15,14 @@ export default function UploadPage() {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!file || !name) return alert('Veuillez remplir tous les champs');
+    if (!file || !name || !price) {
+      alert('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
 
     setUploading(true);
 
-    // Étape 1 : Récupère ou crée une session liée au photographe
+    // Étape 1 : Récupérer ou créer une session liée au photographe
     let sessionId;
     const { data: existingSessions, error: sessionFetchError } = await supabase
       .from('sessions')
@@ -42,8 +46,8 @@ export default function UploadPage() {
         .insert({
           code: newCode,
           photographer_id: user.id,
-          price: 10, // prix par défaut
-          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // +30j
+          price: 10,
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         })
         .select();
 
@@ -70,7 +74,7 @@ export default function UploadPage() {
       return;
     }
 
-    // Étape 3 : Insertion dans la table photos
+    // Étape 3 : Insertion dans la table photos avec pseudo et prix
     const { error: dbError } = await supabase
       .from('photos')
       .insert([
@@ -78,6 +82,8 @@ export default function UploadPage() {
           storage_path: filePath,
           description,
           session_id: sessionId,
+          uploader_username: user.user_metadata?.pseudo || 'inconnu',
+          price: parseFloat(price),
         },
       ]);
 
@@ -97,7 +103,6 @@ export default function UploadPage() {
 
   return (
     <div className="upload-page">
-      {/* Background shapes */}
       <div className="upload-page__background"></div>
       <button onClick={() => navigate('/dashboard')} className="btn-gradient upload-page__back-button">
         ← Retour au Dashboard
@@ -120,6 +125,17 @@ export default function UploadPage() {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="textarea-field"
+        />
+
+        <input
+          type="number"
+          min="0"
+          step="0.01"
+          placeholder="Prix (€)"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          required
+          className="input-field"
         />
 
         <input
