@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import GaleryPage from './pages/GaleryPage';
 import DashboardPage from './pages/DashboardPage';
 import UpladPage from './pages/UploadPage';
+import SettingsPage from './pages/SettingsPage';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/gallery" element={<GaleryPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/upload" element={<UpladPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </Router>
   );
