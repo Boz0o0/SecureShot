@@ -1,34 +1,39 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import supabase from '../services/supabaseClient';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from 'recharts';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [stats, setStats] = useState({ photos: 0, ventes: 0, revenus: 0 });
+  const [salesData, setSalesData] = useState([]);
+  const [period, setPeriod] = useState(30);
 
   useEffect(() => {
     if (!loading && !user) navigate('/login');
-    if (user) fetchStats();
+    if (user) {
+      fetchStats();
+      fetchGraphData();
+    }
   }, [user, loading]);
 
   const fetchStats = async () => {
     const userId = user.id;
 
-    // Nombre de photos
     const { count: photoCount } = await supabase
       .from('photos')
       .select('*', { count: 'exact', head: true })
       .eq('photographer_id', userId);
 
-    // Nombre de ventes
     const { count: venteCount } = await supabase
       .from('purchases')
       .select('*', { count: 'exact', head: true })
       .eq('photographer_id', userId);
 
-    // Revenu total
     const { data: revenueData } = await supabase
       .rpc('total_revenue_for_user', { p_user_id: userId });
 
@@ -39,13 +44,28 @@ export default function DashboardPage() {
     });
   };
 
+  const fetchGraphData = async () => {
+    const { data } = await supabase.rpc('daily_sales_for_user', { p_user_id: user.id });
+    if (data) setSalesData(data);
+  };
+
+  // Filtrer les données en fonction de la période sélectionnée
+  const filteredSalesData = useMemo(() => {
+    if (!salesData || salesData.length === 0) return [];
+
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - period);
+
+    return salesData.filter(({ date }) => new Date(date) >= cutoffDate);
+  }, [salesData, period]);
+
   if (loading || !user) return null;
 
   const pseudo = user.user_metadata?.pseudo || 'utilisateur';
 
   return (
     <div style={{ position: 'relative', zIndex: 0 }}>
-      {/* Fullscreen background */}
+      {/* Background */}
       <div
         style={{
           position: 'fixed',
@@ -76,16 +96,63 @@ export default function DashboardPage() {
           <StatCard title="💰 Revenus (€)" value={stats.revenus.toFixed(2)} />
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
           <button onClick={() => navigate('/upload')} style={actionButtonStyle}>
             ➕ Ajouter une photo
           </button>
           <button onClick={() => navigate('/gallery')} style={actionButtonStyle}>
             🌐 Voir la galerie
           </button>
-          <button onClick={() => navigate('/my-purchases')} style={actionButtonStyle}>
-            🎟️ Mes ventes
-          </button>
+        </div>
+
+        {/* Sélecteur de période */}
+        <div style={{ marginBottom: '1.5rem', color: 'white', fontWeight: '600', fontSize: '1.1rem' }}>
+          Période :{' '}
+          <select
+            value={period}
+            onChange={e => setPeriod(Number(e.target.value))}
+            style={{
+              backgroundColor: '#1f2937',
+              border: '1px solid #334155',
+              color: 'white',
+              borderRadius: '0.5rem',
+              padding: '0.25rem 0.5rem',
+              fontSize: '1rem',
+              cursor: 'pointer'
+            }}
+          >
+            <option value={7}>7 jours</option>
+            <option value={30}>30 jours</option>
+            <option value={90}>90 jours</option>
+            <option value={365}>1 an</option>
+          </select>
+        </div>
+
+        {/* Graphiques */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', flexWrap: 'wrap' }}>
+          <ChartCard title="💸 Revenus journaliers (€)">
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={filteredSalesData}>
+                <CartesianGrid stroke="#334155" />
+                <XAxis dataKey="date" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip />
+                <Line type="monotone" dataKey="revenus" stroke="#10b981" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartCard>
+
+          <ChartCard title="📈 Ventes journalières">
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={filteredSalesData}>
+                <CartesianGrid stroke="#334155" />
+                <XAxis dataKey="date" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip />
+                <Line type="monotone" dataKey="ventes" stroke="#3b82f6" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartCard>
         </div>
       </div>
     </div>
@@ -103,6 +170,21 @@ function StatCard({ title, value }) {
     }}>
       <div style={{ fontSize: '1rem', marginBottom: '0.5rem', color: '#9ca3af' }}>{title}</div>
       <div style={{ fontSize: '1.75rem', fontWeight: '700' }}>{value}</div>
+    </div>
+  );
+}
+
+function ChartCard({ title, children }) {
+  return (
+    <div style={{
+      background: '#1f2937',
+      borderRadius: '0.75rem',
+      padding: '1rem',
+      border: '1px solid #334155',
+      color: 'white'
+    }}>
+      <div style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: '600', color: '#9ca3af' }}>{title}</div>
+      {children}
     </div>
   );
 }
