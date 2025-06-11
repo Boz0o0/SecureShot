@@ -17,45 +17,6 @@
   pointer-events: none;
 }
 
-.upload-page__shape-1 {
-  position: absolute;
-  top: -100px;
-  left: -100px;
-  width: 300px;
-  height: 300px;
-  background-color: #2563eb;
-  opacity: 0.08;
-  transform: rotate(45deg);
-  border-radius: 2rem;
-  filter: blur(80px);
-}
-
-.upload-page__shape-2 {
-  position: absolute;
-  bottom: -120px;
-  right: -120px;
-  width: 350px;
-  height: 350px;
-  background-color: #ec4899;
-  opacity: 0.08;
-  transform: rotate(-30deg);
-  border-radius: 1rem;
-  filter: blur(100px);
-}
-
-.upload-page__shape-3 {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100px;
-  height: 100px;
-  background-color: #10b981;
-  opacity: 0.08;
-  transform: translate(-50%, -50%) rotate(15deg);
-  border-radius: 50%;
-  filter: blur(50px);
-}
-
 .upload-page__title {
   font-size: 2.5rem;
   font-weight: 700;
@@ -72,41 +33,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(51, 65, 85, 0.3);
-  border-radius: 1rem;
   padding: 2rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-.upload-page__input,
-.upload-page__textarea {
-  font-family: inherit;
-  padding: 0.875rem 1rem;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid #475569;
-  color: #f8fafc;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-  outline: none;
-}
-
-.upload-page__input:focus,
-.upload-page__textarea:focus {
-  border-color: #2563eb;
-  background: rgba(15, 23, 42, 0.95);
-}
-
-.upload-page__input::placeholder,
-.upload-page__textarea::placeholder {
-  color: #94a3b8;
-}
-
-.upload-page__textarea {
-  min-height: 120px;
-  resize: vertical;
 }
 
 .upload-page__button {
@@ -118,20 +45,6 @@
   top: 1rem;
   left: 1rem;
   z-index: 10;
-}
-
-/* File input styling */
-.upload-page__input[type="file"] {
-  padding: 0.5rem;
-  background: rgba(15, 23, 42, 0.8);
-  border: 2px dashed #475569;
-  cursor: pointer;
-  text-align: center;
-}
-
-.upload-page__input[type="file"]:hover {
-  border-color: #2563eb;
-  background: rgba(15, 23, 42, 0.95);
 }
 
 /* Responsive design */

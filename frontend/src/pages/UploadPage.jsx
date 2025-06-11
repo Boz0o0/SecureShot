@@ -98,32 +98,28 @@ export default function UploadPage() {
   return (
     <div className="upload-page">
       {/* Background shapes */}
-      <div className="upload-page__background">
-        <div className="upload-page__shape-1"></div>
-        <div className="upload-page__shape-2"></div>
-        <div className="upload-page__shape-3"></div>
-      </div>
+      <div className="upload-page__background"></div>
       <button onClick={() => navigate('/dashboard')} className="btn-gradient upload-page__back-button">
         ← Retour au Dashboard
       </button>
 
       <h1 className="upload-page__title">➕ Ajouter une photo</h1>
 
-      <form onSubmit={handleUpload} className="upload-page__form">
+      <form onSubmit={handleUpload} className="upload-page__form glass-container">
         <input
           type="text"
           placeholder="Nom de l'image"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          className="upload-page__input"
+          className="input-field"
         />
 
         <textarea
           placeholder="Description (ajoutez des #tags si besoin)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="upload-page__textarea"
+          className="textarea-field"
         />
 
         <input
@@ -131,7 +127,7 @@ export default function UploadPage() {
           accept="image/*"
           onChange={(e) => setFile(e.target.files[0])}
           required
-          className="upload-page__input"
+          className="file-input"
         />
 
         <button

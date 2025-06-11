@@ -102,3 +102,74 @@
 .image-hover:hover {
   transform: scale(1.05);
 }
+
+/* Text areas and input fields */
+.input-field {
+  font-family: inherit;
+  padding: 0.875rem 1rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid #475569;
+  color: #f8fafc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: #2563eb;
+  background: rgba(15, 23, 42, 0.95);
+}
+
+.input-field::placeholder {
+  color: #94a3b8;
+}
+
+.textarea-field {
+  font-family: inherit;
+  padding: 0.875rem 1rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid #475569;
+  color: #f8fafc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  min-height: 120px;
+  resize: vertical;
+  transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  outline: none;
+}
+
+.textarea-field:focus {
+  border-color: #2563eb;
+  background: rgba(15, 23, 42, 0.95);
+}
+
+.textarea-field::placeholder {
+  color: #94a3b8;
+}
+
+.file-input {
+  padding: 0.5rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 2px dashed #475569;
+  color: #f8fafc;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  outline: none;
+}
+
+.file-input:hover {
+  border-color: #2563eb;
+  background: rgba(15, 23, 42, 0.95);
+}
+
+/* Glass container  */
+.glass-container {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(51, 65, 85, 0.3);
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
