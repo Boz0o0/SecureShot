@@ -2,6 +2,7 @@ import { useState } from 'react';
 import supabase from '../services/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import '../styles/pages/UploadPage.css';
 
 export default function UploadPage() {
   const [name, setName] = useState('');
@@ -95,31 +96,31 @@ export default function UploadPage() {
   if (!user) return navigate('/login');
 
   return (
-    <div style={{ position: 'relative', minHeight: '100vh', fontFamily: 'system-ui, sans-serif', background: 'linear-gradient(135deg, #0f0f0f, #1f2937)', color: 'white', padding: '4rem 2rem' }}>
+    <div className="upload-page">
       {/* Background shapes */}
-      <div style={{ position: 'fixed', inset: 0, zIndex: -1 }}>
-        <div style={{ position: 'absolute', top: '-100px', left: '-100px', width: '300px', height: '300px', backgroundColor: '#3b82f6', opacity: 0.1, transform: 'rotate(45deg)', borderRadius: '2rem', filter: 'blur(80px)' }} />
-        <div style={{ position: 'absolute', bottom: '-120px', right: '-120px', width: '350px', height: '350px', backgroundColor: '#ec4899', opacity: 0.1, transform: 'rotate(-30deg)', borderRadius: '1rem', filter: 'blur(100px)' }} />
-        <div style={{ position: 'absolute', top: '50%', left: '50%', width: '100px', height: '100px', backgroundColor: '#10b981', opacity: 0.1, transform: 'translate(-50%, -50%) rotate(15deg)', borderRadius: '50%', filter: 'blur(50px)' }} />
+      <div className="upload-page__background">
+        <div className="upload-page__shape-1"></div>
+        <div className="upload-page__shape-2"></div>
+        <div className="upload-page__shape-3"></div>
       </div>
 
-      <h1 style={{ fontSize: '2rem', marginBottom: '2rem', textAlign: 'center' }}>➕ Ajouter une photo</h1>
+      <h1 className="upload-page__title">➕ Ajouter une photo</h1>
 
-      <form onSubmit={handleUpload} style={{ maxWidth: '500px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <form onSubmit={handleUpload} className="upload-page__form">
         <input
           type="text"
-          placeholder="Nom de l’image"
+          placeholder="Nom de l'image"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          style={inputStyle}
+          className="upload-page__input"
         />
 
         <textarea
           placeholder="Description (ajoutez des #tags si besoin)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          style={{ ...inputStyle, minHeight: '100px' }}
+          className="upload-page__textarea"
         />
 
         <input
@@ -127,21 +128,13 @@ export default function UploadPage() {
           accept="image/*"
           onChange={(e) => setFile(e.target.files[0])}
           required
-          style={inputStyle}
+          className="upload-page__input"
         />
 
         <button
           type="submit"
           disabled={uploading}
-          style={{
-            padding: '0.75rem',
-            background: 'linear-gradient(to right, #6366f1, #3b82f6)',
-            border: 'none',
-            borderRadius: '0.75rem',
-            color: 'white',
-            fontWeight: '600',
-            cursor: 'pointer',
-          }}
+          className="upload-page__button"
         >
           {uploading ? '📤 Envoi en cours...' : '📸 Uploader'}
         </button>
@@ -149,12 +142,3 @@ export default function UploadPage() {
     </div>
   );
 }
-
-const inputStyle = {
-  padding: '0.75rem 1rem',
-  background: '#1e293b',
-  border: '1px solid #334155',
-  color: 'white',
-  borderRadius: '0.5rem',
-  fontSize: '1rem',
-};
