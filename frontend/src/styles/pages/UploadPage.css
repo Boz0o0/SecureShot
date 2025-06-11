@@ -4,8 +4,10 @@
   font-family: 'Inter', system-ui, sans-serif;
   background: linear-gradient(135deg, #0f172a, #1e293b);
   color: #f8fafc;
-  padding: 4rem 2rem;
-  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  overflow: hidden;
 }
 
 .upload-page__background {
@@ -61,6 +63,7 @@
   text-align: center;
   color: #f8fafc;
   letter-spacing: -0.025em;
+  padding-top: 4rem;
 }
 
 .upload-page__form {
@@ -107,32 +110,14 @@
 }
 
 .upload-page__button {
-  padding: 0.875rem 1.5rem;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  border: none;
-  border-radius: 0.75rem;
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
-.upload-page__button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 15px rgba(37, 99, 235, 0.3);
-  background: linear-gradient(135deg, #1d4ed8, #2563eb);
-}
-
-.upload-page__button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.upload-page__button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+.upload-page__back-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
 }
 
 /* File input styling */

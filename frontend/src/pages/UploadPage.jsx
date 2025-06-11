@@ -103,6 +103,9 @@ export default function UploadPage() {
         <div className="upload-page__shape-2"></div>
         <div className="upload-page__shape-3"></div>
       </div>
+      <button onClick={() => navigate('/dashboard')} className="btn-gradient upload-page__back-button">
+        ← Retour au Dashboard
+      </button>
 
       <h1 className="upload-page__title">➕ Ajouter une photo</h1>
 
@@ -134,7 +137,7 @@ export default function UploadPage() {
         <button
           type="submit"
           disabled={uploading}
-          className="upload-page__button"
+          className="btn-gradient upload-page__button"
         >
           {uploading ? '📤 Envoi en cours...' : '📸 Uploader'}
         </button>

@@ -20,6 +20,50 @@
   .card {
     @apply bg-white rounded-lg shadow-md p-6;
   }
+
+  .btn-gradient {
+    padding: 0.875rem 1.5rem;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    border: none;
+    border-radius: 0.75rem;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-gradient:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 15px rgba(37, 99, 235, 0.3);
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  }
+  
+  .btn-gradient:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  .btn-gradient:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .btn-dark {
+    padding: 0.5rem 1rem;
+    background: rgba(15, 23, 42, 0.8);
+    border: none;
+    border-radius: 0.5rem;
+    color: #f8fafc;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .btn-dark:hover {
+    background: rgba(15, 23, 42, 0.95);
+  }
 }
 
 /* Custom scrollbar */
