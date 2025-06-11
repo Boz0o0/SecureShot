@@ -5,6 +5,10 @@ import supabase from '../services/supabaseClient';
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [pseudo, setPseudo] = useState('');
+  const [age, setAge] = useState(18);
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
@@ -12,7 +16,23 @@ export default function RegisterPage() {
     e.preventDefault();
     setErrorMsg('');
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    if (age < 18) {
+      setErrorMsg("Tu dois avoir au moins 18 ans pour t'inscrire.");
+      return;
+    }
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          pseudo,
+          age,
+        },
+      },
+    });
 
     if (error) {
       setErrorMsg(error.message);
@@ -53,30 +73,68 @@ export default function RegisterPage() {
             borderRadius: '1rem',
             boxShadow: '0 0 20px rgba(0,0,0,0.3)',
             width: '100%',
-            maxWidth: '400px',
+            maxWidth: '450px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem',
           }}
         >
-          <h2 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Créer un compte</h2>
+          <h2 style={{ textAlign: 'center' }}>Créer un compte</h2>
 
-          {errorMsg && (
-            <p style={{ color: '#f87171', marginBottom: '1rem' }}>{errorMsg}</p>
-          )}
+          {errorMsg && <p style={{ color: '#f87171' }}>{errorMsg}</p>}
+
+          <label>Prénom</label>
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+            style={inputStyle}
+          />
+
+          <label>Nom</label>
+          <input
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+            style={inputStyle}
+          />
+
+          <label>Pseudo</label>
+          <input
+            type="text"
+            value={pseudo}
+            onChange={(e) => setPseudo(e.target.value)}
+            required
+            style={inputStyle}
+          />
+
+          <label>Âge</label>
+          <input
+            type="number"
+            value={age}
+            min={18}
+            onChange={(e) => setAge(Number(e.target.value))}
+            required
+            style={inputStyle}
+          />
 
           <label>Email</label>
           <input
             type="email"
-            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
             style={inputStyle}
           />
 
           <label>Mot de passe</label>
           <input
             type="password"
-            required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
             style={inputStyle}
           />
 
@@ -88,19 +146,18 @@ export default function RegisterPage() {
             type="button"
             onClick={() => navigate('/')}
             style={{
-                marginTop: '1rem',
-                padding: '0.6rem 1.5rem',
-                fontSize: '0.95rem',
-                background: 'none',
-                border: '1px solid #64748b',
-                color: '#94a3b8',
-                borderRadius: '0.5rem',
-                cursor: 'pointer',
+              marginTop: '0.5rem',
+              padding: '0.6rem 1.5rem',
+              fontSize: '0.95rem',
+              background: 'none',
+              border: '1px solid #64748b',
+              color: '#94a3b8',
+              borderRadius: '0.5rem',
+              cursor: 'pointer',
             }}
-            >
+          >
             ← Retour à l'accueil
           </button>
-
         </form>
       </div>
     </div>
@@ -110,7 +167,6 @@ export default function RegisterPage() {
 const inputStyle = {
   width: '100%',
   padding: '0.75rem',
-  marginBottom: '1rem',
   borderRadius: '0.5rem',
   border: '1px solid #475569',
   background: '#0f172a',
