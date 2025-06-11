@@ -142,6 +142,9 @@ export default function GalleryPage() {
               color: 'white',
             }}
           >
+            <p style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
+              📸 Photographe : <strong>{photo.uploader_username}</strong>
+            </p>
             <img
               src={`https://lgiqlrliauiubrupuxjg.supabase.co/storage/v1/object/public/photos/${photo.storage_path}`}
               alt={photo.description}
@@ -149,9 +152,6 @@ export default function GalleryPage() {
             />
             <p style={{ marginTop: '0.5rem', fontSize: '0.95rem' }}>
               {photo.description || 'Aucune description'}
-            </p>
-            <p style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
-              📸 Photographe : <strong>{photo.uploader_username}</strong>
             </p>
             <p style={{ fontSize: '0.85rem', color: '#facc15' }}>
               💰 Prix : {photo.price?.toFixed(2)} €
