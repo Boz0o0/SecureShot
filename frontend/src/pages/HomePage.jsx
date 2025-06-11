@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useAuth from '../hooks/useAuth';
 import supabase from '../services/supabaseClient';
 
@@ -16,6 +16,14 @@ const navButtonStyle = {
 export default function HomePage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+
+  // Empêche scroll global (optionnel : sinon le faire dans CSS global)
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -36,7 +44,18 @@ export default function HomePage() {
   }
 
   return (
-    <div style={{ position: 'relative', zIndex: 0, fontFamily: 'system-ui, sans-serif' }}>
+    <div
+      style={{
+        position: 'relative',
+        zIndex: 0,
+        fontFamily: 'system-ui, sans-serif',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        overflow: 'hidden', // empêche débordements décoratifs
+      }}
+    >
       {/* Fullscreen Background */}
       <div
         style={{
@@ -44,6 +63,7 @@ export default function HomePage() {
           inset: 0,
           background: 'linear-gradient(135deg, #0f0f0f, #1f2937)',
           zIndex: -1,
+          overflow: 'hidden', // empêche débordement décorations
         }}
       >
         {/* Decorative shapes */}
@@ -54,6 +74,8 @@ export default function HomePage() {
             left: '-100px',
             width: '300px',
             height: '300px',
+            maxWidth: '100vw',
+            maxHeight: '100vh',
             backgroundColor: '#3b82f6',
             opacity: 0.1,
             transform: 'rotate(45deg)',
@@ -68,6 +90,8 @@ export default function HomePage() {
             right: '-120px',
             width: '350px',
             height: '350px',
+            maxWidth: '100vw',
+            maxHeight: '100vh',
             backgroundColor: '#ec4899',
             opacity: 0.1,
             transform: 'rotate(-30deg)',
@@ -121,14 +145,14 @@ export default function HomePage() {
       {/* Page Content */}
       <div
         style={{
-          minHeight: '100vh',
-          padding: '4rem 2rem',
+          padding: '4rem 2rem 8rem', // bottom padding pour laisser place au footer
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           color: '#e5e7eb',
           textAlign: 'center',
+          flexGrow: 1, // prend tout l'espace vertical restant
         }}
       >
         <h1 style={{ fontSize: '3rem', fontWeight: '700', marginBottom: '1rem' }}>
@@ -160,13 +184,14 @@ export default function HomePage() {
       {/* Footer */}
       <footer
         style={{
-          position: 'absolute',
-          bottom: '1rem',
           textAlign: 'center',
           fontSize: '0.875rem',
           color: '#6b7280',
           width: '100%',
+          padding: '1rem 0',
+          borderTop: '1px solid #374151',
           zIndex: 1,
+          flexShrink: 0,
         }}
       >
         © {new Date().getFullYear()} SecureShot — Tous droits réservés.
