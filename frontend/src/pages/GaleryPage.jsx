@@ -97,7 +97,6 @@ export default function GalleryPage() {
               alt={photo.description}
               className="gallery-page__photo-image image-hover"
               onClick={() => window.open(`https://lgiqlrliauiubrupuxjg.supabase.co/storage/v1/object/public/photos/${photo.storage_path}`, '_blank')}
-              style={{ cursor: 'pointer' }}
               title="Cliquez pour ouvrir en plein écran"
             />
             <div className="gallery-page__photo-info">

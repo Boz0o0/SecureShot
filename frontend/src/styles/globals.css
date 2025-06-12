@@ -97,6 +97,7 @@
 /* Image hover effects */
 .image-hover {
   transition: transform 0.2s ease-in-out;
+  cursor: 'pointer';
 }
 
 .image-hover:hover {
