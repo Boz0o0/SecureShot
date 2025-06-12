@@ -17,7 +17,7 @@ const navButtonStyle = {
 export default function HomePage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  
+
   useNoScroll();
 
   if (loading) {
@@ -148,6 +148,7 @@ export default function HomePage() {
           color: '#e5e7eb',
           textAlign: 'center',
           flexGrow: 1, // prend tout l'espace vertical restant
+          gap: '1rem',
         }}
       >
         <h1 style={{ fontSize: '3rem', fontWeight: '700', marginBottom: '1rem' }}>
@@ -173,6 +174,25 @@ export default function HomePage() {
           }}
         >
           Accéder à la galerie
+        </button>
+
+        {/* Nouveau bouton pour redemption */}
+        <button
+          onClick={() => navigate(user ? '/redeem' : '/login')}
+          style={{
+            padding: '1rem 2rem',
+            fontSize: '1.1rem',
+            fontWeight: '500',
+            color: '#fff',
+            background: 'linear-gradient(to right, #ec4899, #f43f5e)',
+            border: 'none',
+            borderRadius: '0.75rem',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            transition: 'all 0.3s ease',
+          }}
+        >
+          Redeem a Picture
         </button>
       </div>
 

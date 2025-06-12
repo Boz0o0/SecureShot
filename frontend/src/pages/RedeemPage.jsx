@@ -22,16 +22,11 @@ export default function RedeemPage() {
     }
 
     try {
-      console.log('[DEBUG] Recherche photo pour photoId :', photoId);
 
       const { data, error, status } = await supabase
         .from('photos')
         .select('id, storage_path, photo_id')
         .eq('photo_id', parseInt(photoId));
-
-      console.log('[DEBUG] Supabase status:', status);
-      console.log('[DEBUG] Supabase data:', data);
-      console.log('[DEBUG] Supabase error:', error);
 
       if (error) {
         alert("Erreur lors de la récupération : " + error.message);
@@ -43,14 +38,8 @@ export default function RedeemPage() {
         return;
       }
 
-      const photo = data[0];
-      console.log('[DEBUG] Photo trouvée:', photo);
-
-      const publicUrl = `https://lgiqlrliauiubrupuxjg.supabase.co/storage/v1/object/public/photos/${photo.storage_path}`;
-      console.log('[DEBUG] Ouverture URL publique :', publicUrl);
-      window.open(publicUrl, '_blank');
+      navigate(`/payment/${photoId}`);
     } catch (err) {
-      console.error('[DEBUG] Exception inattendue :', err);
       alert("Une erreur inconnue est survenue.");
     }
   };
