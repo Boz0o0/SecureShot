@@ -7,6 +7,7 @@ import UserMenu from '../components/UserMenu.jsx';
 import '../styles/pages/UploadPage.css';
 
 export default function UploadPage() {
+  useNoScroll();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -21,9 +22,6 @@ export default function UploadPage() {
       alert('Veuillez remplir tous les champs obligatoires');
       return;
     }
-
-    setUploading(true);
-    useNoScroll();
 
     // Étape 1 : Récupérer ou créer une session liée au photographe
     let sessionId;

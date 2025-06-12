@@ -23,9 +23,9 @@ export default function GalleryPage() {
   const fetchPhotos = async () => {
     let query = supabase
       .from('photos')
-      .select('id, storage_path, description, uploader_username, price, created_at');
+      .select('id, storage_path, description, uploader_username, price, created_at')
+      .eq('uploader_username', user.user_metadata?.pseudo);
 
-    // Appliquer recherche si search non vide
     if (search.trim() !== '') {
       query = query.or(`description.ilike.%${search}%,uploader_username.ilike.%${search}%`);
     }

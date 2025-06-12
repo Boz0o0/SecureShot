@@ -20,17 +20,39 @@ export default function RedeemPage() {
       alert('Code invalide. Le code doit contenir entre 1 et 6 chiffres.');
       return;
     }
-    const { data: photo, error } = await supabase
-      .from('photos')
-      .select('*')
-      .eq('photo_id', parseInt(photoId))
-      .single();
-    if (error || !photo) {
-      alert('Aucune photo trouvée avec ce code.');
-      return;
+
+    try {
+      console.log('[DEBUG] Recherche photo pour photoId :', photoId);
+
+      const { data, error, status } = await supabase
+        .from('photos')
+        .select('id, storage_path, photo_id')
+        .eq('photo_id', parseInt(photoId));
+
+      console.log('[DEBUG] Supabase status:', status);
+      console.log('[DEBUG] Supabase data:', data);
+      console.log('[DEBUG] Supabase error:', error);
+
+      if (error) {
+        alert("Erreur lors de la récupération : " + error.message);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        alert('Aucune photo trouvée avec ce code.');
+        return;
+      }
+
+      const photo = data[0];
+      console.log('[DEBUG] Photo trouvée:', photo);
+
+      const publicUrl = `https://lgiqlrliauiubrupuxjg.supabase.co/storage/v1/object/public/photos/${photo.storage_path}`;
+      console.log('[DEBUG] Ouverture URL publique :', publicUrl);
+      window.open(publicUrl, '_blank');
+    } catch (err) {
+      console.error('[DEBUG] Exception inattendue :', err);
+      alert("Une erreur inconnue est survenue.");
     }
-    const publicUrl = `https://lgiqlrliauiubrupuxjg.supabase.co/storage/v1/object/public/photos/${photo.storage_path}`;
-    window.open(publicUrl, '_blank');
   };
 
   if (loading) {
