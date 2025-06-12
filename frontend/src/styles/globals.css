@@ -174,3 +174,59 @@
   border-radius: 1rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
+
+
+/* User Menu Styles */
+.user-menu {
+  position: relative;
+}
+
+.user-menu__button {
+  font-size: 1.3rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.user-menu__button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.user-menu__dropdown {
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+  overflow: hidden;
+  min-width: 160px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+.user-menu__item {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.user-menu__item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.user-menu__item--danger {
+  color: #f87171;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-menu__item--danger:hover {
+  background: rgba(248, 113, 113, 0.1);
+}

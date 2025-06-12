@@ -47,6 +47,13 @@
   z-index: 10;
 }
 
+.upload-page__user-menu {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+}
+
 /* Responsive design */
 @media (max-width: 640px) {
   .upload-page {

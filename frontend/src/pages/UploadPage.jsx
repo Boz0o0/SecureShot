@@ -2,6 +2,7 @@ import { useState } from 'react';
 import supabase from '../services/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import UserMenu from '../components/UserMenu.jsx';
 import '../styles/pages/UploadPage.css';
 
 export default function UploadPage() {
@@ -107,6 +108,9 @@ export default function UploadPage() {
       <button onClick={() => navigate('/dashboard')} className="btn-gradient upload-page__back-button">
         ← Retour au Dashboard
       </button>
+      <div className="upload-page__user-menu">
+        <UserMenu />
+      </div>
 
       <h1 className="upload-page__title">➕ Ajouter une photo</h1>
 
