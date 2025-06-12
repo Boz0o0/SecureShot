@@ -17,21 +17,20 @@ export default function RedeemPage() {
 
   const handleRedeem = async () => {
     if (!/^\d{1,6}$/.test(photoId)) {
-      alert('Code invalide.');
+      alert('Code invalide. Le code doit contenir entre 1 et 6 chiffres.');
       return;
     }
-
-    const { data, error } = await supabase
+    const { data: photo, error } = await supabase
       .from('photos')
       .select('*')
       .eq('photo_id', parseInt(photoId))
       .single();
-
-    if (error || !data) {
+    if (error || !photo) {
       alert('Aucune photo trouvée avec ce code.');
-    } else {
-      navigate(`/photo/${data.id}`); // à adapter selon ta route
+      return;
     }
+    const publicUrl = `https://lgiqlrliauiubrupuxjg.supabase.co/storage/v1/object/public/photos/${photo.storage_path}`;
+    window.open(publicUrl, '_blank');
   };
 
   if (loading) {
