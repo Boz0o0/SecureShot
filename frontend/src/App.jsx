@@ -8,6 +8,7 @@ import GaleryPage from './pages/GaleryPage';
 import DashboardPage from './pages/DashboardPage';
 import UpladPage from './pages/UploadPage';
 import SettingsPage from './pages/SettingsPage';
+import RedeemPage from './pages/RedeemPage';
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/upload" element={<UpladPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/redeem" element={<RedeemPage />} />
       </Routes>
     </Router>
   );
