@@ -67,18 +67,7 @@ const Settings = () => {
         </div>
 
         <div style={{ marginBottom: '1rem' }}>
-          <label>Email PayPal:</label><br />
-          <input
-            type="email"
-            value={paypalEmail}
-            onChange={(e) => setPaypalEmail(e.target.value)}
-            required
-            className="input-field"
-          />
-        </div>
-
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Email:</label><br />
+          <label>Entrez nouvel email:</label><br />
           <input
             type="email"
             value={email}
@@ -89,11 +78,22 @@ const Settings = () => {
         </div>
 
         <div style={{ marginBottom: '1rem' }}>
-          <label>Nouveau mot de passe:</label><br />
+          <label> Entrez nouveau mot de passe:</label><br />
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
+            className="input-field"
+          />
+        </div>
+
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Email PayPal:</label><br />
+          <input
+            type="email"
+            value={paypalEmail}
+            onChange={(e) => setPaypalEmail(e.target.value)}
             required
             className="input-field"
           />
