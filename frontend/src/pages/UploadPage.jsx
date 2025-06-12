@@ -2,6 +2,7 @@ import { useState } from 'react';
 import supabase from '../services/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import useNoScroll from '../hooks/useNoScroll';
 import UserMenu from '../components/UserMenu.jsx';
 import '../styles/pages/UploadPage.css';
 
@@ -22,6 +23,7 @@ export default function UploadPage() {
     }
 
     setUploading(true);
+    useNoScroll();
 
     // Étape 1 : Récupérer ou créer une session liée au photographe
     let sessionId;

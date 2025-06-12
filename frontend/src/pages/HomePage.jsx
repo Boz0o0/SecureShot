@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import useAuth from '../hooks/useAuth';
+import useNoScroll from '../hooks/useNoScroll';
 import supabase from '../services/supabaseClient';
 
 const navButtonStyle = {
@@ -16,14 +17,8 @@ const navButtonStyle = {
 export default function HomePage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-
-  // Empêche scroll global (optionnel : sinon le faire dans CSS global)
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, []);
+  
+  useNoScroll();
 
   if (loading) {
     return (
