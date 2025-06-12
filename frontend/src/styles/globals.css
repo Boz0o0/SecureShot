@@ -230,3 +230,7 @@
 .user-menu__item--danger:hover {
   background: rgba(248, 113, 113, 0.1);
 }
+
+.no-scroll {
+  overflow: hidden;
+}
