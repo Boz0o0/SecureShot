@@ -23,7 +23,7 @@ export default function GalleryPage() {
   const fetchPhotos = async () => {
     let query = supabase
       .from('photos')
-      .select('id, storage_path, description, uploader_username, price, created_at')
+      .select('id, photo_id, storage_path, description, uploader_username, price, created_at')
       .eq('uploader_username', user.user_metadata?.pseudo);
 
     if (search.trim() !== '') {
@@ -112,6 +112,9 @@ export default function GalleryPage() {
               </p>
               <p className="gallery-page__photo-date">
                 🕒 {new Date(photo.created_at).toLocaleString()}
+              </p>
+              <p className="gallery-page__photo-id">
+                🆔 ID : {photo.photo_id}
               </p>
             </div>
           </div>
