@@ -105,9 +105,6 @@ export default function UploadPage() {
   return (
     <div className="upload-page">
       <div className="upload-page__background"></div>
-      <button onClick={() => navigate('/dashboard')} className="btn-gradient upload-page__back-button">
-        ← Retour au Dashboard
-      </button>
       <div className="upload-page__user-menu">
         <UserMenu />
       </div>

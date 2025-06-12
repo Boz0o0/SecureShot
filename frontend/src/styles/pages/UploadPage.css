@@ -69,13 +69,6 @@
   width: 100%;
 }
 
-.upload-page__back-button {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 10;
-}
-
 .upload-page__user-menu {
   position: fixed;
   top: 1rem;
