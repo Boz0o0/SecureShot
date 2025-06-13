@@ -14,18 +14,36 @@ export default function PaymentPage() {
 
   useEffect(() => {
     const fetchPhoto = async () => {
+      console.log("📸 Chargement des infos de la photo pour photo_id =", photoId);
+      
       const { data, error } = await supabase
         .from('photos')
-        .select('id, storage_path, photo_id, price')
+        .select(`
+          id,
+          storage_path,
+          photo_id,
+          price,
+          photographer_id,
+          photographer:profiles!photos_photographer_id_fkey(paypal_email)
+        `)
         .eq('photo_id', parseInt(photoId))
         .limit(1)
         .single();
 
-      if (error || !data) {
+      if (error) {
+        console.error('❌ Erreur Supabase:', error);
+      }
+
+      if (!data) {
+        console.warn('⚠️ Aucune donnée reçue de Supabase');
         alert('Photo non trouvée');
         navigate('/redeem');
         return;
       }
+
+      console.log('✅ Photo reçue de Supabase :', data);
+      console.log('📧 Email PayPal du photographe :', data?.photographer?.paypal_email ?? 'Non défini');
+      console.log('🧑 ID photographe:', data.photographer_id);
 
       setPhoto(data);
       setLoading(false);
@@ -73,27 +91,46 @@ export default function PaymentPage() {
     if (!photo) return;
 
     const loadPayPal = async () => {
-      if (window.paypal) return renderPayPal();
-      const script = document.createElement('script');
-      script.src = `https://www.paypal.com/sdk/js?client-id=${import.meta.env.VITE_PAYPAL_CLIENT_ID}&currency=EUR`;
-      script.onload = renderPayPal;
-      document.body.appendChild(script);
+      if (!photo?.photographer?.paypal_email) {
+        console.warn("❌ Pas d'email PayPal défini pour le photographe.");
+        alert("Le vendeur n'a pas configuré son adresse PayPal.");
+        return;
+      }
+
+      console.log("🚀 Paiement PayPal pour :", {
+        prix: photo.price,
+        photo_id: photo.photo_id,
+        email_paypal: photo.photographer.paypal_email
+      });
+
+      if (window.paypal) {
+        renderPayPal();
+      } else {
+        const script = document.createElement('script');
+        script.src = `https://www.paypal.com/sdk/js?client-id=${import.meta.env.VITE_PAYPAL_CLIENT_ID}&currency=EUR`;
+        script.onload = renderPayPal;
+        document.body.appendChild(script);
+      }
     };
 
     const renderPayPal = () => {
+      if (!photo?.photographer?.paypal_email) return;
+
       window.paypal.Buttons({
         createOrder: (data, actions) => {
           return actions.order.create({
             purchase_units: [{
               amount: { value: photo.price.toFixed(2) },
               description: `Achat photo #${photo.photo_id}`,
+              payee: {
+                email_address: photo.photographer.paypal_email,
+              },
             }],
           });
         },
         onApprove: async (data, actions) => {
           const details = await actions.order.capture();
           alert(`Paiement réussi ! Merci ${details.payer.name.given_name}`);
-
           const fullImageUrl = `https://lgiqlrliauiubrupuxjg.supabase.co/storage/v1/object/public/photos/${photo.storage_path}`;
           navigate(`/confirm?image=${encodeURIComponent(fullImageUrl)}&photo_id=${photo.id}&storage_path=${photo.storage_path}`);
         },
@@ -127,7 +164,6 @@ export default function PaymentPage() {
       <div style={styles.content}>
         <h1 style={styles.title}>Finalisez votre paiement</h1>
         <canvas ref={canvasRef} alt="Preview floutée" style={styles.previewCanvas} />
-
         <div style={styles.paymentInfo}>
           <p style={styles.price}>Prix : {photo.price.toFixed(2)} €</p>
           <div ref={paypalRef} style={{ marginTop: '1rem' }} />
@@ -305,17 +341,12 @@ const styles = {
     borderRadius: '1rem',
     boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
   },
-  payButton: {
-    padding: '1rem 2.5rem',
-    fontSize: '1.1rem',
+  paymentInfo: {
+    marginTop: '1rem',
+  },
+  price: {
+    fontSize: '1.3rem',
     fontWeight: '600',
-    color: 'white',
-    background: 'linear-gradient(to right, #6366f1, #3b82f6)',
-    border: 'none',
-    borderRadius: '0.75rem',
-    cursor: 'pointer',
-    boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
-    transition: 'background-color 0.3s ease',
   },
   loading: {
     minHeight: '100vh',
