@@ -24,7 +24,7 @@ export default function PaymentPage() {
           photo_id,
           price,
           photographer_id,
-          photographer:profiles!photos_photographer_id_fkey(paypal_email)
+          photographer:profiles(paypal_email)
         `)
         .eq('photo_id', parseInt(photoId))
         .limit(1)
@@ -118,6 +118,7 @@ export default function PaymentPage() {
 
       window.paypal.Buttons({
         createOrder: (data, actions) => {
+          console.log(photo.photographer.paypal_email)
           return actions.order.create({
             purchase_units: [{
               amount: { value: photo.price.toFixed(2) },

@@ -24,19 +24,19 @@ export default function DashboardPage() {
   const fetchStats = async () => {
     const userId = user.id;
 
-    // Nombre de photos mises en ligne
+    // Nombre de photos actuellement en ligne
     const { count: photoCount } = await supabase
       .from('photos')
       .select('*', { count: 'exact', head: true })
       .eq('photographer_id', userId);
 
-    // Nombre de ventes effectuées (en tant que vendeur)
-    const { count: venteCount } = await supabase
+    // Nombre de photos vendues (pour ce photographe)
+    const { count: soldPhotoCount } = await supabase
       .from('sales')
       .select('*', { count: 'exact', head: true })
       .eq('seller_id', userId);
 
-    // Calcul du total des revenus en additionnant tous les montants des ventes
+    // Total des revenus
     const { data: revenueData, error } = await supabase
       .from('sales')
       .select('amount')
@@ -48,8 +48,8 @@ export default function DashboardPage() {
     }
 
     setStats({
-      photos: photoCount || 0,
-      ventes: venteCount || 0,
+      photos: (photoCount || 0) + (soldPhotoCount || 0),
+      ventes: soldPhotoCount || 0,
       revenus: totalRevenue
     });
   };
