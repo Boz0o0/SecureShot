@@ -93,7 +93,9 @@ export default function PaymentPage() {
         onApprove: async (data, actions) => {
           const details = await actions.order.capture();
           alert(`Paiement réussi ! Merci ${details.payer.name.given_name}`);
-          navigate(`/confirm?image=https://lgiqlrliauiubrupuxjg.supabase.co/storage/v1/object/public/photos/${photo.storage_path}`);
+
+          const fullImageUrl = `https://lgiqlrliauiubrupuxjg.supabase.co/storage/v1/object/public/photos/${photo.storage_path}`;
+          navigate(`/confirm?image=${encodeURIComponent(fullImageUrl)}&photo_id=${photo.id}&storage_path=${photo.storage_path}`);
         },
         onError: (err) => {
           console.error('Erreur PayPal:', err);
