@@ -1,0 +1,242 @@
+.home-page {
+  position: relative;
+  z-index: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.home-page__background {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  z-index: -1;
+  overflow: hidden;
+}
+
+.home-page__background::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 300px;
+  height: 300px;
+  max-width: 100vw;
+  max-height: 100vh;
+  background-color: #3b82f6;
+  opacity: 0.1;
+  transform: rotate(45deg);
+  border-radius: 2rem;
+  filter: blur(80px);
+}
+
+.home-page__background::after {
+  content: '';
+  position: absolute;
+  bottom: -120px;
+  right: -120px;
+  width: 350px;
+  height: 350px;
+  max-width: 100vw;
+  max-height: 100vh;
+  background-color: #ec4899;
+  opacity: 0.1;
+  transform: rotate(-30deg);
+  border-radius: 1rem;
+  filter: blur(100px);
+}
+
+.home-page__background-shape {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  background-color: #10b981;
+  opacity: 0.1;
+  transform: translate(-50%, -50%) rotate(15deg);
+  border-radius: 50%;
+  filter: blur(50px);
+}
+
+.home-page__navbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1rem 2rem;
+  display: flex;
+  gap: 1rem;
+  z-index: 10;
+  align-items: center;
+}
+
+.home-page__nav-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  background: none;
+  border: 1px solid #6366f1;
+  color: #6366f1;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.home-page__nav-button:hover {
+  background: #6366f1;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.home-page__content {
+  padding: 4rem 2rem 8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #e5e7eb;
+  text-align: center;
+  flex-grow: 1;
+  gap: 1rem;
+}
+
+.home-page__title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #6366f1, #3b82f6, #ec4899);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: titlePulse 3s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.home-page__subtitle {
+  font-size: 1.2rem;
+  color: #9ca3af;
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.home-page__button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.home-page__button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.home-page__button--primary {
+  background: linear-gradient(to right, #6366f1, #3b82f6);
+}
+
+.home-page__button--primary:hover {
+  background: linear-gradient(to right, #5855eb, #2563eb);
+}
+
+.home-page__button--secondary {
+  background: linear-gradient(to right, #ec4899, #f43f5e);
+}
+
+.home-page__button--secondary:hover {
+  background: linear-gradient(to right, #db2777, #e11d48);
+}
+
+.home-page__footer {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  width: 100%;
+  padding: 1rem 0;
+  border-top: 1px solid #374151;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.home-page__loading {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.home-page__loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid transparent;
+  border-top: 2px solid #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.home-page__user-menu {
+  position: fixed;
+  top: 1rem;
+  right: 2rem;
+  z-index: 20;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .home-page__title {
+    font-size: 2.5rem;
+  }
+  
+  .home-page__subtitle {
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+  
+  .home-page__content {
+    padding: 2rem 1rem 4rem;
+  }
+  
+  .home-page__navbar {
+    padding: 1rem;
+  }
+  
+  .home-page__button {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-page__title {
+    font-size: 2rem;
+  }
+  
+  .home-page__background::before,
+  .home-page__background::after {
+    width: 200px;
+    height: 200px;
+  }
+}
