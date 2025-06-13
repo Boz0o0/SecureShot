@@ -130,18 +130,11 @@ const Settings = () => {
                 value={password}
                 placeholder='••••••••'
                 onChange={(e) => setPassword(e.target.value)}
+                required
                 className="input-field"
               />
               {passwordError && (
-                <div style={{
-                  color: '#ef4444',
-                  fontSize: '0.75rem',
-                  marginTop: '0.25rem',
-                  padding: '0.25rem',
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  border: '1px solid rgba(239, 68, 68, 0.2)',
-                  borderRadius: '0.25rem'
-                }}>
+                <div className="settings-page__error-message">
                   {passwordError}
                 </div>
               )}

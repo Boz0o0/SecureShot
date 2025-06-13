@@ -152,6 +152,16 @@
   background: rgba(15, 23, 42, 0.95);
 }
 
+.settings-page__error-message {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  padding: 0.25rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 0.25rem;
+}
+
 .settings-page__buttons {
   display: flex;
   justify-content: space-between;
