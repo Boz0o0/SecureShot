@@ -1,103 +1,92 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import supabase from '../services/supabaseClient';
+import '../styles/pages/LoginPage.css';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setErrorMsg('');
+    setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const loginToast = toast.loading('Connexion en cours...');
 
-    if (error) {
-      setErrorMsg(error.message);
-    } else {
-      alert('✅ Connexion réussie');
-      navigate('/');
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        toast.dismiss(loginToast);
+        toast.error(error.message);
+      } else {
+        toast.dismiss(loginToast);
+        toast.success('Connexion réussie !');
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      toast.dismiss(loginToast);
+      toast.error('Une erreur inattendue s\'est produite');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ position: 'relative', zIndex: 0 }}>
-      {/* Fullscreen Background */}
-      <div
-        style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'linear-gradient(135deg, #0f0f0f, #1e293b)',
-          zIndex: -1,
+    <div className="login-page">
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 4000,
+          className: 'react-hot-toast',
         }}
       />
+      
+      <div className="login-page__background"></div>
 
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '2rem',
-          color: 'white',
-          fontFamily: 'system-ui, sans-serif',
-        }}
-      >
-        <form
-          onSubmit={handleLogin}
-          style={{
-            background: '#1f2937',
-            padding: '2rem',
-            borderRadius: '1rem',
-            boxShadow: '0 0 20px rgba(0,0,0,0.3)',
-            width: '100%',
-            maxWidth: '400px',
-          }}
-        >
-          <h2 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Connexion</h2>
+      <div className="login-page__content">
+        <form onSubmit={handleLogin} className="login-page__form glass-container">
+          <h2 className="login-page__title">Connexion</h2>
 
-          {errorMsg && (
-            <p style={{ color: '#f87171', marginBottom: '1rem' }}>{errorMsg}</p>
-          )}
+          <div className="login-page__form-group">
+            <label className="login-page__label">Email</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="login-page__input"
+              placeholder="votre@email.com"
+            />
+          </div>
 
-          <label>Email</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={inputStyle}
-          />
+          <div className="login-page__form-group">
+            <label className="login-page__label">Mot de passe</label>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="login-page__input"
+              placeholder="••••••••"
+            />
+          </div>
 
-          <label>Mot de passe</label>
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={inputStyle}
-          />
-
-          <button type="submit" style={buttonStyle}>
-            Se connecter
+          <button 
+            type="submit" 
+            className="btn-gradient login-page__submit"
+            disabled={loading}
+          >
+            {loading ? '⏳ Connexion...' : '🔐 Se connecter'}
           </button>
 
           <button
             type="button"
             onClick={() => navigate('/')}
-            style={{
-              marginTop: '1rem',
-              padding: '0.6rem 1.5rem',
-              fontSize: '0.95rem',
-              background: 'none',
-              border: '1px solid #475569',
-              color: '#94a3b8',
-              borderRadius: '0.5rem',
-              cursor: 'pointer',
-              width: '100%',
-            }}
+            className="login-page__back-button"
           >
             ← Retour à l'accueil
           </button>
@@ -106,24 +95,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-const inputStyle = {
-  width: '100%',
-  padding: '0.75rem',
-  marginBottom: '1rem',
-  borderRadius: '0.5rem',
-  border: '1px solid #475569',
-  background: '#0f172a',
-  color: 'white',
-};
-
-const buttonStyle = {
-  width: '100%',
-  padding: '0.75rem',
-  background: 'linear-gradient(to right, #6366f1, #3b82f6)',
-  border: 'none',
-  borderRadius: '0.5rem',
-  color: 'white',
-  fontWeight: '600',
-  cursor: 'pointer',
-};
