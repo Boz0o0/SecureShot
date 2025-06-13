@@ -83,6 +83,7 @@ install_dependencies() {
   (
     cd frontend
     npm install
+    npm install react-hot-toast
   )
   echo -e "${GREEN}✔ Frontend dependencies installed.${RESET}"
 }
