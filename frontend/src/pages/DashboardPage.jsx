@@ -24,29 +24,61 @@ export default function DashboardPage() {
   const fetchStats = async () => {
     const userId = user.id;
 
+    // Nombre de photos mises en ligne
     const { count: photoCount } = await supabase
       .from('photos')
       .select('*', { count: 'exact', head: true })
       .eq('photographer_id', userId);
 
+    // Nombre de ventes effectuées (en tant que vendeur)
     const { count: venteCount } = await supabase
-      .from('purchases')
+      .from('sales')
       .select('*', { count: 'exact', head: true })
-      .eq('photographer_id', userId);
+      .eq('seller_id', userId);
 
-    const { data: revenueData } = await supabase
-      .rpc('total_revenue_for_user', { p_user_id: userId });
+    // Calcul du total des revenus en additionnant tous les montants des ventes
+    const { data: revenueData, error } = await supabase
+      .from('sales')
+      .select('amount')
+      .eq('seller_id', userId);
+
+    let totalRevenue = 0;
+    if (revenueData) {
+      totalRevenue = revenueData.reduce((sum, sale) => sum + (sale.amount || 0), 0);
+    }
 
     setStats({
       photos: photoCount || 0,
       ventes: venteCount || 0,
-      revenus: revenueData?.[0]?.total || 0
+      revenus: totalRevenue
     });
   };
 
   const fetchGraphData = async () => {
-    const { data } = await supabase.rpc('daily_sales_for_user', { p_user_id: user.id });
-    if (data) setSalesData(data);
+    const userId = user.id;
+
+    const { data, error } = await supabase
+      .from('sales')
+      .select('sale_date, amount')
+      .eq('seller_id', userId);
+
+    if (error) {
+      console.error('Erreur fetch sales:', error);
+      setSalesData([]);
+      return;
+    }
+
+    const aggregated = data.reduce((acc, sale) => {
+      const dateKey = new Date(sale.sale_date).toISOString().split('T')[0];
+      if (!acc[dateKey]) acc[dateKey] = { date: dateKey, revenus: 0, ventes: 0 };
+      acc[dateKey].revenus += sale.amount || 0;
+      acc[dateKey].ventes += 1;
+      return acc;
+    }, {});
+
+    const result = Object.values(aggregated).sort((a, b) => new Date(a.date) - new Date(b.date));
+    console.log('Graph sales data:', result);
+    setSalesData(result);
   };
 
   // Filtrer les données en fonction de la période sélectionnée

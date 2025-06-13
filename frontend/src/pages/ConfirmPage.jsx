@@ -1,6 +1,7 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import supabase from '../services/supabaseClient';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function ConfirmPage() {
   const [searchParams] = useSearchParams();
@@ -13,7 +14,6 @@ export default function ConfirmPage() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState('');
 
-  // Scroll désactivé
   useEffect(() => {
     const original = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -22,7 +22,6 @@ export default function ConfirmPage() {
     };
   }, []);
 
-  // Récupération utilisateur
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -31,46 +30,58 @@ export default function ConfirmPage() {
     fetchUser();
   }, []);
 
-  // Suppression photo après paiement
   useEffect(() => {
     const buyPhotoAndDelete = async () => {
       if (!photoId || !storagePath) {
         setError("Paramètres manquants.");
         return;
       }
-
       if (!user) return;
 
-      // 1. Insérer la vente
-      const { error: insertError } = await supabase.from('sales').insert([
+      // 1. Récupérer la photo (avec photographer_id et prix)
+      const { data: photoData, error: photoError } = await supabase
+        .from('photos')
+        .select('id, photographer_id, price')
+        .eq('id', photoId)
+        .single();
+
+      if (photoError || !photoData) {
+        setError("Erreur récupération photo : " + (photoError?.message || "photo introuvable"));
+        return;
+      }
+      console.log('📸 Photo récupérée:', photoData);
+
+      // 2. Insérer la vente dans sales
+      const { data: insertData, error: insertError } = await supabase.from('sales').insert([
         {
-          photo_id: photoId,
+          photo_id: photoData.id,
           buyer_id: user.id,
+          seller_id: photoData.photographer_id,
+          amount: photoData.price,
+          sale_date: new Date().toISOString()  // si tu as un champ sale_date
         },
-      ]);
+      ]).select(); // .select() pour récupérer l'insert
+
       if (insertError) {
+        console.error('❌ Erreur insert sales:', insertError);
         setError("Erreur enregistrement de la vente : " + insertError.message);
         return;
       }
+      console.log('✅ Vente insérée:', insertData);
 
-      // 2. Supprimer le fichier
-      const { error: storageError } = await supabase
-        .storage
-        .from('photos')
-        .remove([storagePath]);
-      if (storageError) {
-        setError("Erreur suppression fichier : " + storageError.message);
-        return;
-      }
-
-      // 3. Supprimer l’entrée dans la table photos
+      // 3. Supprimer la photo dans photos
       const { error: deleteError } = await supabase
         .from('photos')
         .delete()
         .eq('id', photoId);
+
       if (deleteError) {
         setError("Erreur suppression BDD : " + deleteError.message);
+        return;
       }
+      console.log('🗑 Photo supprimée de photos:', photoId);
+
+      toast.success('✅ Achat et transfert vers sales réussis !');
     };
 
     buyPhotoAndDelete();
@@ -97,7 +108,8 @@ export default function ConfirmPage() {
         textAlign: 'center',
       }}
     >
-      {/* Fond décoratif */}
+      <Toaster position="top-center" />
+
       <div
         style={{
           position: 'fixed',
@@ -112,15 +124,10 @@ export default function ConfirmPage() {
         <div style={blurBox('#10b981', '50%', '50%', '100px', '100px', 50, true)} />
       </div>
 
-      {/* Bouton retour */}
-      <button
-        onClick={() => navigate('/')}
-        style={navButtonStyle}
-      >
+      <button onClick={() => navigate('/')} style={navButtonStyle}>
         ⬅ Menu principal
       </button>
 
-      {/* Menu utilisateur */}
       {user && (
         <div style={{ position: 'absolute', top: '1.5rem', right: '2rem', zIndex: 10 }}>
           <button
@@ -147,7 +154,6 @@ export default function ConfirmPage() {
         </div>
       )}
 
-      {/* Message principal */}
       <h1 style={{ fontSize: '2.5rem', fontWeight: 700, color: '#e5e7eb' }}>
         ✅ Paiement réussi !
       </h1>

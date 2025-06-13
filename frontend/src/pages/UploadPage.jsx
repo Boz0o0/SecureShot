@@ -85,6 +85,7 @@ export default function UploadPage() {
           session_id: sessionId,
           uploader_username: user.user_metadata?.pseudo || 'inconnu',
           price: parseFloat(price),
+          photographer_id: user.id,
         },
       ]);
 
