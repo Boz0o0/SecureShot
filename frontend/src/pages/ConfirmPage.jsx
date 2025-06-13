@@ -68,8 +68,6 @@ export default function ConfirmPage() {
         return;
       }
 
-      toast.success('✅ Vente enregistrée.');
-
       const { error: deleteError } = await supabase
         .from('photos')
         .delete()
@@ -79,9 +77,6 @@ export default function ConfirmPage() {
         toast.error("Erreur suppression BDD : " + deleteError.message);
         return;
       }
-
-      toast.success('🗑 Photo supprimée avec succès.');
-      toast.success('✅ Achat et transfert vers sales réussis !');
     };
 
     buyPhotoAndDelete();
@@ -90,6 +85,31 @@ export default function ConfirmPage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.reload();
+  };
+
+  // Nouvelle fonction pour forcer téléchargement
+  const handleDownload = async () => {
+    if (!imageUrl) {
+      toast.error("URL de l'image introuvable.");
+      return;
+    }
+    try {
+      const res = await fetch(imageUrl, { mode: 'cors' });
+      if (!res.ok) throw new Error('Erreur réseau');
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'photo.jpg'; // nom du fichier téléchargé, tu peux personnaliser
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error("Erreur lors du téléchargement.");
+    }
   };
 
   return (
@@ -161,14 +181,20 @@ export default function ConfirmPage() {
         Merci pour votre achat. Vous pouvez maintenant accéder à votre photo :
       </p>
 
-      <a
-        href={imageUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        style={viewButtonStyle}
-      >
-        Voir l’image
-      </a>
+      <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
+        <a
+          href={imageUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={viewButtonStyle}
+        >
+          Voir l’image
+        </a>
+
+        <button onClick={handleDownload} style={downloadButtonStyle}>
+          Télécharger l’image
+        </button>
+      </div>
     </div>
   );
 }
@@ -211,7 +237,6 @@ const userMenuStyle = {
 };
 
 const viewButtonStyle = {
-  marginTop: '1.5rem',
   padding: '1rem 2rem',
   fontSize: '1.1rem',
   fontWeight: 600,
@@ -220,6 +245,24 @@ const viewButtonStyle = {
   borderRadius: '0.75rem',
   textDecoration: 'none',
   boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
+  transition: 'all 0.3s ease',
+};
+
+const downloadButtonStyle = {
+  padding: '1rem 2rem',
+  fontSize: '1.1rem',
+  fontWeight: 600,
+  background: 'linear-gradient(to right, #6366f1, #818cf8)',
+  color: 'white',
+  borderRadius: '0.75rem',
+  border: 'none',
+  cursor: 'pointer',
+  boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
+  transition: 'all 0.3s ease',
+};
+
+downloadButtonStyle[':hover'] = {
+  background: 'linear-gradient(to right, #818cf8, #6366f1)',
 };
 
 const blurBox = (color, top, left, w, h, blur, center = false) => ({

@@ -152,7 +152,7 @@ export default function PaymentPage() {
 
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
       <div style={styles.page}>
         <div style={styles.background}>
           <div style={styles.shapeBlue} />

@@ -49,7 +49,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
       <div style={{ position: 'relative', zIndex: 0 }}>
         {/* Fullscreen background */}
         <div
