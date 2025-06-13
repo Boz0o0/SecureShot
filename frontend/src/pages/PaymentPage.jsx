@@ -137,8 +137,7 @@ export default function PaymentPage() {
           }
         },
         onError: (err) => {
-          toast.error('Erreur pendant le paiement.');
-          console.error('Erreur PayPal:', err);
+          toast.error('Erreur pendant le paiement:', err);
         }
       }).render(paypalRef.current);
     };

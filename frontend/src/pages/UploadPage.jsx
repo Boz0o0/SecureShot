@@ -35,8 +35,7 @@ export default function UploadPage() {
       .limit(1);
 
     if (sessionFetchError) {
-      console.error('Erreur récupération session:', sessionFetchError.message);
-      toast.error("Erreur lors de la récupération de la session");
+      toast.error("Erreur lors de la récupération de la session : " + sessionFetchError.message);
       setUploading(false);
       return;
     }
@@ -56,8 +55,7 @@ export default function UploadPage() {
         .select();
 
       if (sessionCreateError || !newSession || newSession.length === 0) {
-        console.error('Erreur création session:', sessionCreateError?.message);
-        toast.error("Erreur lors de la création de la session");
+        toast.error("Erreur lors de la création de la session : " + (sessionCreateError?.message || "inconnue"));
         setUploading(false);
         return;
       }
@@ -72,8 +70,7 @@ export default function UploadPage() {
       .upload(filePath, file);
 
     if (storageError) {
-      console.error('Erreur upload:', storageError.message);
-      toast.error('Erreur lors de l\'upload');
+      toast.error('Erreur lors de l\'upload : ' + storageError.message);
       setUploading(false);
       return;
     }
@@ -93,7 +90,6 @@ export default function UploadPage() {
       ]);
 
     if (dbError) {
-      console.error('Erreur DB:', dbError);
       toast.error(`Erreur en base de données : ${dbError.message}`);
     } else {
       toast.success('✅ Photo uploadée !');
