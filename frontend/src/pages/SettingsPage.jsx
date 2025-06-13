@@ -16,6 +16,8 @@ const Settings = () => {
   const [notifications, setNotifications] = useState(true);
   const [theme, setTheme] = useState('light');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [pseudoAvailable, setPseudoAvailable] = useState(true);
+  const [checkingPseudo, setCheckingPseudo] = useState(false);
 
   const navigate = useNavigate();
   const { user, loading } = useAuth();
@@ -44,6 +46,40 @@ const Settings = () => {
     fetchProfile();
   }, [user]);
 
+  // Vérifie la disponibilité du pseudo en live, avec debounce
+  useEffect(() => {
+    if (!username) {
+      setPseudoAvailable(true);
+      return;
+    }
+
+    let isMounted = true;
+    setCheckingPseudo(true);
+
+    const timeoutId = setTimeout(async () => {
+      if (!isMounted) return;
+      // Requête pour vérifier si le pseudo existe dans un autre profil
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('pseudo', username)
+        .neq('id', user?.id)
+        .limit(1);
+
+      if (!error) {
+        setPseudoAvailable(data.length === 0);
+      } else {
+        setPseudoAvailable(true); // En cas d'erreur, on laisse passer
+      }
+      setCheckingPseudo(false);
+    }, 500);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+    };
+  }, [username, user]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsUpdating(true);
@@ -51,12 +87,20 @@ const Settings = () => {
     const updateToast = toast.loading('Mise à jour en cours...');
 
     try {
+      if (!pseudoAvailable) {
+        toast.dismiss(updateToast);
+        toast.error('Ce pseudo est déjà utilisé.');
+        setIsUpdating(false);
+        return;
+      }
+
       const emailChanged = email !== user?.email;
       const { data: currentProfile } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
+
       const metadataChanges = 
         firstName !== (currentProfile?.first_name || '') ||
         lastName !== (currentProfile?.last_name || '') ||
@@ -184,7 +228,14 @@ const Settings = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 className="input-field"
+                style={{ borderColor: pseudoAvailable ? undefined : '#f87171' }}
               />
+              {!checkingPseudo && !pseudoAvailable && (
+                <p style={{ color: '#f87171', marginTop: '0.25rem' }}>Ce pseudo est déjà utilisé.</p>
+              )}
+              {checkingPseudo && (
+                <p style={{ color: '#94a3b8', marginTop: '0.25rem' }}>Vérification du pseudo...</p>
+              )}
             </div>
 
             <div className="settings-page__form-group">

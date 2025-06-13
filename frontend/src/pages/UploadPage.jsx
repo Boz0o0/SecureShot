@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import useNoScroll from '../hooks/useNoScroll';
 import UserMenu from '../components/UserMenu.jsx';
+import toast, { Toaster } from 'react-hot-toast';
 import '../styles/pages/UploadPage.css';
 
 export default function UploadPage() {
@@ -19,9 +20,11 @@ export default function UploadPage() {
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!file || !name || !price) {
-      alert('Veuillez remplir tous les champs obligatoires');
+      toast.error('Veuillez remplir tous les champs obligatoires');
       return;
     }
+
+    setUploading(true);
 
     // Étape 1 : Récupérer ou créer une session liée au photographe
     let sessionId;
@@ -33,7 +36,7 @@ export default function UploadPage() {
 
     if (sessionFetchError) {
       console.error('Erreur récupération session:', sessionFetchError.message);
-      alert("Erreur lors de la récupération de la session");
+      toast.error("Erreur lors de la récupération de la session");
       setUploading(false);
       return;
     }
@@ -54,7 +57,7 @@ export default function UploadPage() {
 
       if (sessionCreateError || !newSession || newSession.length === 0) {
         console.error('Erreur création session:', sessionCreateError?.message);
-        alert("Erreur lors de la création de la session");
+        toast.error("Erreur lors de la création de la session");
         setUploading(false);
         return;
       }
@@ -70,7 +73,7 @@ export default function UploadPage() {
 
     if (storageError) {
       console.error('Erreur upload:', storageError.message);
-      alert('Erreur lors de l\'upload');
+      toast.error('Erreur lors de l\'upload');
       setUploading(false);
       return;
     }
@@ -91,9 +94,9 @@ export default function UploadPage() {
 
     if (dbError) {
       console.error('Erreur DB:', dbError);
-      alert(`Erreur en base de données : ${dbError.message}`);
+      toast.error(`Erreur en base de données : ${dbError.message}`);
     } else {
-      alert('✅ Photo uploadée !');
+      toast.success('✅ Photo uploadée !');
       navigate('/gallery');
     }
 
@@ -105,6 +108,7 @@ export default function UploadPage() {
 
   return (
     <div className="upload-page">
+      <Toaster position="top-center" toastOptions={{ duration: 4000, className: 'react-hot-toast' }} />
       <div className="upload-page__background"></div>
       <div className="upload-page__user-menu">
         <UserMenu />

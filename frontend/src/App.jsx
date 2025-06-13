@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import PaymentSuccess from './pages/PaymentSuccess';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import GaleryPage from './pages/GaleryPage';
@@ -69,14 +68,6 @@ export default function App() {
           element={
             <PrivateRoute>
               <RedeemPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/payment/success"
-          element={
-            <PrivateRoute>
-              <PaymentSuccess />
             </PrivateRoute>
           }
         />

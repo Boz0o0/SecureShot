@@ -12,7 +12,6 @@ export default function ConfirmPage() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     const original = document.body.style.overflow;
@@ -33,12 +32,11 @@ export default function ConfirmPage() {
   useEffect(() => {
     const buyPhotoAndDelete = async () => {
       if (!photoId || !storagePath) {
-        setError("Paramètres manquants.");
+        toast.error("Paramètres manquants.");
         return;
       }
       if (!user) return;
 
-      // 1. Récupérer la photo (avec photographer_id et prix)
       const { data: photoData, error: photoError } = await supabase
         .from('photos')
         .select('id, photographer_id, price')
@@ -46,41 +44,43 @@ export default function ConfirmPage() {
         .single();
 
       if (photoError || !photoData) {
-        setError("Erreur récupération photo : " + (photoError?.message || "photo introuvable"));
+        toast.error("Erreur récupération photo : " + (photoError?.message || "photo introuvable"));
         return;
       }
-      console.log('📸 Photo récupérée:', photoData);
 
-      // 2. Insérer la vente dans sales
-      const { data: insertData, error: insertError } = await supabase.from('sales').insert([
-        {
-          photo_id: photoData.id,
-          buyer_id: user.id,
-          seller_id: photoData.photographer_id,
-          amount: photoData.price,
-          sale_date: new Date().toISOString()  // si tu as un champ sale_date
-        },
-      ]).select(); // .select() pour récupérer l'insert
+      toast.success('📸 Photo récupérée avec succès.');
+
+      const { data: insertData, error: insertError } = await supabase
+        .from('sales')
+        .insert([
+          {
+            photo_id: photoData.id,
+            buyer_id: user.id,
+            seller_id: photoData.photographer_id,
+            amount: photoData.price,
+            sale_date: new Date().toISOString()
+          },
+        ])
+        .select();
 
       if (insertError) {
-        console.error('❌ Erreur insert sales:', insertError);
-        setError("Erreur enregistrement de la vente : " + insertError.message);
+        toast.error("Erreur enregistrement de la vente : " + insertError.message);
         return;
       }
-      console.log('✅ Vente insérée:', insertData);
 
-      // 3. Supprimer la photo dans photos
+      toast.success('✅ Vente enregistrée.');
+
       const { error: deleteError } = await supabase
         .from('photos')
         .delete()
         .eq('id', photoId);
 
       if (deleteError) {
-        setError("Erreur suppression BDD : " + deleteError.message);
+        toast.error("Erreur suppression BDD : " + deleteError.message);
         return;
       }
-      console.log('🗑 Photo supprimée de photos:', photoId);
 
+      toast.success('🗑 Photo supprimée avec succès.');
       toast.success('✅ Achat et transfert vers sales réussis !');
     };
 
@@ -169,12 +169,6 @@ export default function ConfirmPage() {
       >
         Voir l’image
       </a>
-
-      {error && (
-        <p style={{ color: 'salmon', marginTop: '1rem', fontSize: '0.95rem' }}>
-          ⚠️ {error}
-        </p>
-      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../services/supabaseClient';
 import useAuth from '../hooks/useAuth';
+import { toast } from 'react-hot-toast';
 
 export default function RedeemPage() {
   const [photoId, setPhotoId] = useState('');
@@ -17,30 +18,29 @@ export default function RedeemPage() {
 
   const handleRedeem = async () => {
     if (!/^\d{1,6}$/.test(photoId)) {
-      alert('Code invalide. Le code doit contenir entre 1 et 6 chiffres.');
+      toast.error('Code invalide. Le code doit contenir entre 1 et 6 chiffres.');
       return;
     }
 
     try {
-
       const { data, error, status } = await supabase
         .from('photos')
         .select('id, storage_path, photo_id')
         .eq('photo_id', parseInt(photoId));
 
       if (error) {
-        alert("Erreur lors de la récupération : " + error.message);
+        toast.error("Erreur lors de la récupération : " + error.message);
         return;
       }
 
       if (!data || data.length === 0) {
-        alert('Aucune photo trouvée avec ce code.');
+        toast.error('Aucune photo trouvée avec ce code.');
         return;
       }
 
       navigate(`/payment/${photoId}`);
     } catch (err) {
-      alert("Une erreur inconnue est survenue.");
+      toast.error("Une erreur inconnue est survenue.");
     }
   };
 

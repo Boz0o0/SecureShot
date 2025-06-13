@@ -11,14 +11,10 @@ export default function HomePage() {
 
   useNoScroll();
 
-  const handleNavigation = (route, message) => {
+  const handleNavigation = (route) => {
     if (!user && (route === '/gallery' || route === '/redeem')) {
-      toast.error('Vous devez être connecté pour accéder à cette page');
       navigate('/login');
     } else {
-      if (message) {
-        toast.success(message);
-      }
       navigate(route);
     }
   };
@@ -52,13 +48,13 @@ export default function HomePage() {
         {!user ? (
           <>
             <button 
-              onClick={() => handleNavigation('/register', 'Redirection vers la création de compte')} 
+              onClick={() => handleNavigation('/register')} 
               className="home-page__nav-button"
             >
               Créer un compte
             </button>
             <button 
-              onClick={() => handleNavigation('/login', 'Redirection vers la connexion')} 
+              onClick={() => handleNavigation('/login')} 
               className="home-page__nav-button"
             >
               Connexion
@@ -79,14 +75,14 @@ export default function HomePage() {
         </p>
 
         <button
-          onClick={() => handleNavigation(user ? '/gallery' : '/login', user ? 'Redirection vers la galerie' : null)}
+          onClick={() => handleNavigation(user ? '/gallery' : '/login')}
           className="home-page__button home-page__button--primary"
         >
           Accéder à la galerie
         </button>
 
         <button
-          onClick={() => handleNavigation(user ? '/redeem' : '/login', user ? 'Redirection vers la récupération de photo' : null)}
+          onClick={() => handleNavigation(user ? '/redeem' : '/login')}
           className="home-page__button home-page__button--secondary"
         >
           Redeem a Picture

@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import supabase from '../services/supabaseClient';
+import toast, { Toaster } from 'react-hot-toast';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
@@ -24,64 +25,66 @@ export default function DashboardPage() {
   const fetchStats = async () => {
     const userId = user.id;
 
-    // Nombre de photos actuellement en ligne
-    const { count: photoCount } = await supabase
-      .from('photos')
-      .select('*', { count: 'exact', head: true })
-      .eq('photographer_id', userId);
+    try {
+      const { count: photoCount } = await supabase
+        .from('photos')
+        .select('*', { count: 'exact', head: true })
+        .eq('photographer_id', userId);
 
-    // Nombre de photos vendues (pour ce photographe)
-    const { count: soldPhotoCount } = await supabase
-      .from('sales')
-      .select('*', { count: 'exact', head: true })
-      .eq('seller_id', userId);
+      const { count: soldPhotoCount } = await supabase
+        .from('sales')
+        .select('*', { count: 'exact', head: true })
+        .eq('seller_id', userId);
 
-    // Total des revenus
-    const { data: revenueData, error } = await supabase
-      .from('sales')
-      .select('amount')
-      .eq('seller_id', userId);
+      const { data: revenueData, error } = await supabase
+        .from('sales')
+        .select('amount')
+        .eq('seller_id', userId);
 
-    let totalRevenue = 0;
-    if (revenueData) {
-      totalRevenue = revenueData.reduce((sum, sale) => sum + (sale.amount || 0), 0);
+      if (error) throw error;
+
+      let totalRevenue = 0;
+      if (revenueData) {
+        totalRevenue = revenueData.reduce((sum, sale) => sum + (sale.amount || 0), 0);
+      }
+
+      setStats({
+        photos: (photoCount || 0) + (soldPhotoCount || 0),
+        ventes: soldPhotoCount || 0,
+        revenus: totalRevenue
+      });
+    } catch (err) {
+      toast.error('Erreur lors du chargement des statistiques.');
     }
-
-    setStats({
-      photos: (photoCount || 0) + (soldPhotoCount || 0),
-      ventes: soldPhotoCount || 0,
-      revenus: totalRevenue
-    });
   };
 
   const fetchGraphData = async () => {
     const userId = user.id;
 
-    const { data, error } = await supabase
-      .from('sales')
-      .select('sale_date, amount')
-      .eq('seller_id', userId);
+    try {
+      const { data, error } = await supabase
+        .from('sales')
+        .select('sale_date, amount')
+        .eq('seller_id', userId);
 
-    if (error) {
-      console.error('Erreur fetch sales:', error);
+      if (error) throw error;
+
+      const aggregated = data.reduce((acc, sale) => {
+        const dateKey = new Date(sale.sale_date).toISOString().split('T')[0];
+        if (!acc[dateKey]) acc[dateKey] = { date: dateKey, revenus: 0, ventes: 0 };
+        acc[dateKey].revenus += sale.amount || 0;
+        acc[dateKey].ventes += 1;
+        return acc;
+      }, {});
+
+      const result = Object.values(aggregated).sort((a, b) => new Date(a.date) - new Date(b.date));
+      setSalesData(result);
+    } catch (err) {
+      toast.error("Erreur lors du chargement des données de ventes.");
       setSalesData([]);
-      return;
     }
-
-    const aggregated = data.reduce((acc, sale) => {
-      const dateKey = new Date(sale.sale_date).toISOString().split('T')[0];
-      if (!acc[dateKey]) acc[dateKey] = { date: dateKey, revenus: 0, ventes: 0 };
-      acc[dateKey].revenus += sale.amount || 0;
-      acc[dateKey].ventes += 1;
-      return acc;
-    }, {});
-
-    const result = Object.values(aggregated).sort((a, b) => new Date(a.date) - new Date(b.date));
-    console.log('Graph sales data:', result);
-    setSalesData(result);
   };
 
-  // Filtrer les données en fonction de la période sélectionnée
   const filteredSalesData = useMemo(() => {
     if (!salesData || salesData.length === 0) return [];
 
@@ -97,6 +100,8 @@ export default function DashboardPage() {
 
   return (
     <div style={{ position: 'relative', zIndex: 0 }}>
+      <Toaster position="top-center" />
+
       {/* Background */}
       <div
         style={{

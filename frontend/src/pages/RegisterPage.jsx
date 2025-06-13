@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../services/supabaseClient';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState('');
   const [pseudo, setPseudo] = useState('');
   const [age, setAge] = useState(18);
+  // On peut garder errorMsg si tu veux afficher aussi dans le form
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
@@ -17,7 +19,9 @@ export default function RegisterPage() {
     setErrorMsg('');
 
     if (age < 18) {
-      setErrorMsg("Tu dois avoir au moins 18 ans pour t'inscrire.");
+      const msg = "Tu dois avoir au moins 18 ans pour t'inscrire.";
+      setErrorMsg(msg);
+      toast.error(msg);
       return;
     }
 
@@ -36,131 +40,135 @@ export default function RegisterPage() {
 
     if (error) {
       setErrorMsg(error.message);
+      toast.error(error.message);
     } else {
-      alert('✅ Inscription réussie ! Connecte-toi.');
+      toast.success('✅ Inscription réussie ! Connecte-toi.');
       navigate('/login');
     }
   };
 
   return (
-    <div style={{ position: 'relative', zIndex: 0 }}>
-      {/* Fullscreen background */}
-      <div
-        style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'linear-gradient(135deg, #0f0f0f, #1e293b)',
-          zIndex: -1,
-        }}
-      />
-
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '2rem',
-          color: 'white',
-          fontFamily: 'system-ui, sans-serif',
-        }}
-      >
-        <form
-          onSubmit={handleRegister}
+    <>
+      <Toaster position="top-right" />
+      <div style={{ position: 'relative', zIndex: 0 }}>
+        {/* Fullscreen background */}
+        <div
           style={{
-            background: '#1f2937',
-            padding: '2rem',
-            borderRadius: '1rem',
-            boxShadow: '0 0 20px rgba(0,0,0,0.3)',
-            width: '100%',
-            maxWidth: '450px',
+            position: 'fixed',
+            inset: 0,
+            background: 'linear-gradient(135deg, #0f0f0f, #1e293b)',
+            zIndex: -1,
+          }}
+        />
+
+        <div
+          style={{
+            minHeight: '100vh',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '2rem',
+            color: 'white',
+            fontFamily: 'system-ui, sans-serif',
           }}
         >
-          <h2 style={{ textAlign: 'center' }}>Créer un compte</h2>
-
-          {errorMsg && <p style={{ color: '#f87171' }}>{errorMsg}</p>}
-
-          <label>Prénom</label>
-          <input
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-            style={inputStyle}
-          />
-
-          <label>Nom</label>
-          <input
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-            style={inputStyle}
-          />
-
-          <label>Pseudo</label>
-          <input
-            type="text"
-            value={pseudo}
-            onChange={(e) => setPseudo(e.target.value)}
-            required
-            style={inputStyle}
-          />
-
-          <label>Âge</label>
-          <input
-            type="number"
-            value={age}
-            min={18}
-            onChange={(e) => setAge(Number(e.target.value))}
-            required
-            style={inputStyle}
-          />
-
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={inputStyle}
-          />
-
-          <label>Mot de passe</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={inputStyle}
-          />
-
-          <button type="submit" style={buttonStyle}>
-            S'inscrire
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigate('/')}
+          <form
+            onSubmit={handleRegister}
             style={{
-              marginTop: '0.5rem',
-              padding: '0.6rem 1.5rem',
-              fontSize: '0.95rem',
-              background: 'none',
-              border: '1px solid #64748b',
-              color: '#94a3b8',
-              borderRadius: '0.5rem',
-              cursor: 'pointer',
+              background: '#1f2937',
+              padding: '2rem',
+              borderRadius: '1rem',
+              boxShadow: '0 0 20px rgba(0,0,0,0.3)',
+              width: '100%',
+              maxWidth: '450px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
             }}
           >
-            ← Retour à l'accueil
-          </button>
-        </form>
+            <h2 style={{ textAlign: 'center' }}>Créer un compte</h2>
+
+            {errorMsg && <p style={{ color: '#f87171' }}>{errorMsg}</p>}
+
+            <label>Prénom</label>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              style={inputStyle}
+            />
+
+            <label>Nom</label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+              style={inputStyle}
+            />
+
+            <label>Pseudo</label>
+            <input
+              type="text"
+              value={pseudo}
+              onChange={(e) => setPseudo(e.target.value)}
+              required
+              style={inputStyle}
+            />
+
+            <label>Âge</label>
+            <input
+              type="number"
+              value={age}
+              min={18}
+              onChange={(e) => setAge(Number(e.target.value))}
+              required
+              style={inputStyle}
+            />
+
+            <label>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={inputStyle}
+            />
+
+            <label>Mot de passe</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={inputStyle}
+            />
+
+            <button type="submit" style={buttonStyle}>
+              S'inscrire
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              style={{
+                marginTop: '0.5rem',
+                padding: '0.6rem 1.5rem',
+                fontSize: '0.95rem',
+                background: 'none',
+                border: '1px solid #64748b',
+                color: '#94a3b8',
+                borderRadius: '0.5rem',
+                cursor: 'pointer',
+              }}
+            >
+              ← Retour à l'accueil
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

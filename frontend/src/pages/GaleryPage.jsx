@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import supabase from '../services/supabaseClient';
 import UserMenu from '../components/UserMenu.jsx';
+import { toast } from 'react-hot-toast';
 import '../styles/pages/GalleryPage.css';
 
 export default function GalleryPage() {
@@ -30,7 +31,6 @@ export default function GalleryPage() {
       query = query.or(`description.ilike.%${search}%,uploader_username.ilike.%${search}%`);
     }
 
-    // Appliquer tri
     switch (sortBy) {
       case 'date_asc':
         query = query.order('created_at', { ascending: true });
@@ -51,8 +51,7 @@ export default function GalleryPage() {
     const { data, error } = await query;
 
     if (error) {
-      console.error('❌ Erreur Supabase :', error.message);
-      alert('Erreur Supabase : ' + error.message);
+      toast.error('Erreur Supabase : ' + error.message);
     } else {
       setPhotos(data);
     }

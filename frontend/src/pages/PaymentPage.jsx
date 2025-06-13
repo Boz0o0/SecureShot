@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import supabase from '../services/supabaseClient';
 import useAuth from '../hooks/useAuth';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function PaymentPage() {
   const { photoId } = useParams();
@@ -14,8 +15,8 @@ export default function PaymentPage() {
 
   useEffect(() => {
     const fetchPhoto = async () => {
-      console.log("📸 Chargement des infos de la photo pour photo_id =", photoId);
-      
+      toast.loading("📸 Chargement des infos de la photo...", { id: 'loadingPhoto' });
+
       const { data, error } = await supabase
         .from('photos')
         .select(`
@@ -30,21 +31,20 @@ export default function PaymentPage() {
         .limit(1)
         .single();
 
+      toast.dismiss('loadingPhoto');
+
       if (error) {
-        console.error('❌ Erreur Supabase:', error);
+        toast.error('❌ Erreur Supabase: ' + error.message);
+        return;
       }
 
       if (!data) {
-        console.warn('⚠️ Aucune donnée reçue de Supabase');
-        alert('Photo non trouvée');
+        toast.error('⚠️ Photo non trouvée');
         navigate('/redeem');
         return;
       }
 
-      console.log('✅ Photo reçue de Supabase :', data);
-      console.log('📧 Email PayPal du photographe :', data?.photographer?.paypal_email ?? 'Non défini');
-      console.log('🧑 ID photographe:', data.photographer_id);
-
+      toast.success('✅ Photo chargée');
       setPhoto(data);
       setLoading(false);
     };
@@ -92,23 +92,21 @@ export default function PaymentPage() {
 
     const loadPayPal = async () => {
       if (!photo?.photographer?.paypal_email) {
-        console.warn("❌ Pas d'email PayPal défini pour le photographe.");
-        alert("Le vendeur n'a pas configuré son adresse PayPal.");
+        toast.error("Le vendeur n'a pas configuré son adresse PayPal.");
         return;
       }
 
-      console.log("🚀 Paiement PayPal pour :", {
-        prix: photo.price,
-        photo_id: photo.photo_id,
-        email_paypal: photo.photographer.paypal_email
-      });
+      toast.loading("🚀 Chargement du bouton PayPal...", { id: 'loadingPayPal' });
 
       if (window.paypal) {
         renderPayPal();
       } else {
         const script = document.createElement('script');
         script.src = `https://www.paypal.com/sdk/js?client-id=${import.meta.env.VITE_PAYPAL_CLIENT_ID}&currency=EUR`;
-        script.onload = renderPayPal;
+        script.onload = () => {
+          toast.dismiss('loadingPayPal');
+          renderPayPal();
+        };
         document.body.appendChild(script);
       }
     };
@@ -118,7 +116,6 @@ export default function PaymentPage() {
 
       window.paypal.Buttons({
         createOrder: (data, actions) => {
-          console.log(photo.photographer.paypal_email)
           return actions.order.create({
             purchase_units: [{
               amount: { value: photo.price.toFixed(2) },
@@ -130,14 +127,18 @@ export default function PaymentPage() {
           });
         },
         onApprove: async (data, actions) => {
-          const details = await actions.order.capture();
-          alert(`Paiement réussi ! Merci ${details.payer.name.given_name}`);
-          const fullImageUrl = `https://lgiqlrliauiubrupuxjg.supabase.co/storage/v1/object/public/photos/${photo.storage_path}`;
-          navigate(`/confirm?image=${encodeURIComponent(fullImageUrl)}&photo_id=${photo.id}&storage_path=${photo.storage_path}`);
+          try {
+            const details = await actions.order.capture();
+            toast.success(`Paiement réussi ! Merci ${details.payer.name.given_name}`);
+            const fullImageUrl = `https://lgiqlrliauiubrupuxjg.supabase.co/storage/v1/object/public/photos/${photo.storage_path}`;
+            navigate(`/confirm?image=${encodeURIComponent(fullImageUrl)}&photo_id=${photo.id}&storage_path=${photo.storage_path}`);
+          } catch {
+            toast.error('Erreur lors de la confirmation du paiement.');
+          }
         },
         onError: (err) => {
+          toast.error('Erreur pendant le paiement.');
           console.error('Erreur PayPal:', err);
-          alert('Erreur pendant le paiement.');
         }
       }).render(paypalRef.current);
     };
@@ -150,27 +151,30 @@ export default function PaymentPage() {
   }
 
   return (
-    <div style={styles.page}>
-      <div style={styles.background}>
-        <div style={styles.shapeBlue} />
-        <div style={styles.shapePink} />
-        <div style={styles.shapeGreen} />
-      </div>
+    <>
+      <Toaster position="top-right" />
+      <div style={styles.page}>
+        <div style={styles.background}>
+          <div style={styles.shapeBlue} />
+          <div style={styles.shapePink} />
+          <div style={styles.shapeGreen} />
+        </div>
 
-      <div style={styles.navbar}>
-        <button onClick={() => navigate('/')} style={navButtonStyle}>⬅ Accueil</button>
-        {user && <UserMenu />}
-      </div>
+        <div style={styles.navbar}>
+          <button onClick={() => navigate('/')} style={navButtonStyle}>⬅ Accueil</button>
+          {user && <UserMenu />}
+        </div>
 
-      <div style={styles.content}>
-        <h1 style={styles.title}>Finalisez votre paiement</h1>
-        <canvas ref={canvasRef} alt="Preview floutée" style={styles.previewCanvas} />
-        <div style={styles.paymentInfo}>
-          <p style={styles.price}>Prix : {photo.price.toFixed(2)} €</p>
-          <div ref={paypalRef} style={{ marginTop: '1rem' }} />
+        <div style={styles.content}>
+          <h1 style={styles.title}>Finalisez votre paiement</h1>
+          <canvas ref={canvasRef} alt="Preview floutée" style={styles.previewCanvas} />
+          <div style={styles.paymentInfo}>
+            <p style={styles.price}>Prix : {photo.price.toFixed(2)} €</p>
+            <div ref={paypalRef} style={{ marginTop: '1rem' }} />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
