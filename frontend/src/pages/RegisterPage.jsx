@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../services/supabaseClient';
 import toast, { Toaster } from 'react-hot-toast';
@@ -12,9 +12,44 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState('');
   const [pseudo, setPseudo] = useState('');
   const [age, setAge] = useState(18);
-  // On peut garder errorMsg si tu veux afficher aussi dans le form
   const [errorMsg, setErrorMsg] = useState('');
+  const [pseudoAvailable, setPseudoAvailable] = useState(true);
+  const [checkingPseudo, setCheckingPseudo] = useState(false);
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!pseudo) {
+      setPseudoAvailable(true);
+      return;
+    }
+
+    let isMounted = true;
+    setCheckingPseudo(true);
+
+    const timeoutId = setTimeout(async () => {
+      if (!isMounted) return;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('pseudo', pseudo)
+        .limit(1);
+
+      if (!error) {
+        setPseudoAvailable(data.length === 0);
+      } else {
+        setPseudoAvailable(true);
+      }
+
+      setCheckingPseudo(false);
+    }, 500);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+    };
+  }, [pseudo]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -22,6 +57,13 @@ export default function RegisterPage() {
 
     if (age < 18) {
       const msg = "Tu dois avoir au moins 18 ans pour t'inscrire.";
+      setErrorMsg(msg);
+      toast.error(msg);
+      return;
+    }
+
+    if (!pseudoAvailable) {
+      const msg = 'Ce pseudo est déjà utilisé.';
       setErrorMsg(msg);
       toast.error(msg);
       return;
@@ -52,17 +94,14 @@ export default function RegisterPage() {
   return (
     <div className="register-page">
       <Toaster position="top-center" />
-      
-      {/* Background with decorative elements */}
+
       <div className="register-page__background" />
 
       <div className="register-page__container">
         <form onSubmit={handleRegister} className="register-page__form">
           <h2 className="register-page__title">Créer un compte</h2>
 
-          {errorMsg && (
-            <p className="register-page__error">{errorMsg}</p>
-          )}
+          {errorMsg && <p className="register-page__error">{errorMsg}</p>}
 
           <div className="register-page__field-group">
             <label className="register-page__label">Prénom</label>
@@ -94,7 +133,14 @@ export default function RegisterPage() {
               onChange={(e) => setPseudo(e.target.value)}
               required
               className="register-page__input"
+              style={{ borderColor: pseudoAvailable ? undefined : '#f87171' }}
             />
+            {!checkingPseudo && !pseudoAvailable && (
+              <p style={{ color: '#f87171', marginTop: '0.25rem' }}>Ce pseudo est déjà utilisé.</p>
+            )}
+            {checkingPseudo && (
+              <p style={{ color: '#94a3b8', marginTop: '0.25rem' }}>Vérification du pseudo...</p>
+            )}
           </div>
 
           <div className="register-page__field-group">
@@ -131,7 +177,11 @@ export default function RegisterPage() {
             />
           </div>
 
-          <button type="submit" className="register-page__submit-btn">
+          <button
+            type="submit"
+            className="register-page__submit-btn"
+            disabled={!pseudoAvailable || checkingPseudo}
+          >
             S'inscrire
           </button>
 
