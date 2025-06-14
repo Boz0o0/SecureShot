@@ -11,7 +11,6 @@ import PaymentPage from './pages/PaymentPage';
 import ConfirmPage from './pages/ConfirmPage';
 import { PrivateRoute, PublicOnlyRoute } from './RouteGuards';
 import { SpeedInsights } from '@vercel/speed-insights/react';
-import { Analytics } from "@vercel/analytics/next";
 
 export default function App() {
   return (
@@ -87,7 +86,6 @@ export default function App() {
       </Routes>
       {/* Intégration de Vercel Speed Insights */}
       <SpeedInsights />
-      <Analytics />
     </Router>
   );
 }
