@@ -1,0 +1,243 @@
+.payment-page {
+  position: relative;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #f8fafc;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.payment-page__background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+}
+
+.payment-page__background::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 300px;
+  height: 300px;
+  background-color: #3b82f6;
+  opacity: 0.1;
+  transform: rotate(45deg);
+  border-radius: 2rem;
+  filter: blur(80px);
+}
+
+.payment-page__navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.payment-page__nav-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  background: none;
+  border: 1px solid #6366f1;
+  color: #6366f1;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-family: inherit;
+}
+
+.payment-page__nav-button:hover {
+  background: #6366f1;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+}
+
+.payment-page__content {
+  text-align: center;
+  color: #e5e7eb;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  max-width: 400px;
+  width: 90%;
+  z-index: 1;
+  position: relative;
+}
+
+.payment-page__content::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: -20px;
+  right: -20px;
+  bottom: 0px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  z-index: -1;
+}
+
+.payment-page__title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #3b82f6, #ec4899);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.payment-page__preview-canvas {
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease-in-out;
+}
+
+.payment-page__preview-canvas:hover {
+  transform: scale(1.02);
+}
+
+.payment-page__payment-info {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  position: relative;
+  padding: 2rem 2.5rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  min-width: 350px;
+}
+
+.payment-page__price {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+  color: #10b981;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.payment-page__paypal-container {
+  margin-top: 0.5rem;
+  min-height: 60px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.payment-page__loading {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
+  gap: 1rem;
+}
+
+.payment-page__loading-spinner {
+  font-size: 2rem;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.payment-page__loading p {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .payment-page__title {
+    font-size: 2rem;
+  }
+  
+  .payment-page__content {
+    padding: 1rem;
+    width: 95%;
+  }
+  
+  .payment-page__navbar {
+    padding: 1rem;
+  }
+  
+  .payment-page__nav-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .payment-page__payment-info {
+    min-width: 320px;
+    padding: 1.5rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-page__title {
+    font-size: 1.8rem;
+  }
+  
+  .payment-page__price {
+    font-size: 1.2rem;
+  }
+  
+  .payment-page__preview-canvas {
+    max-width: 280px;
+  }
+  
+  .payment-page__payment-info {
+    min-width: 300px;
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .payment-page__paypal-container {
+    max-width: 300px;
+  }
+}
+
+.payment-page__content {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
