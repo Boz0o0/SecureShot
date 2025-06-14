@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../services/supabaseClient';
 import toast, { Toaster } from 'react-hot-toast';
+import '../styles/pages/RegisterPage.css';
+import '../styles/globals.css';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -48,146 +50,100 @@ export default function RegisterPage() {
   };
 
   return (
-    <>
+    <div className="register-page">
       <Toaster position="top-center" />
-      <div style={{ position: 'relative', zIndex: 0 }}>
-        {/* Fullscreen background */}
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'linear-gradient(135deg, #0f0f0f, #1e293b)',
-            zIndex: -1,
-          }}
-        />
+      
+      {/* Background with decorative elements */}
+      <div className="register-page__background" />
 
-        <div
-          style={{
-            minHeight: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2rem',
-            color: 'white',
-            fontFamily: 'system-ui, sans-serif',
-          }}
-        >
-          <form
-            onSubmit={handleRegister}
-            style={{
-              background: '#1f2937',
-              padding: '2rem',
-              borderRadius: '1rem',
-              boxShadow: '0 0 20px rgba(0,0,0,0.3)',
-              width: '100%',
-              maxWidth: '450px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1rem',
-            }}
-          >
-            <h2 style={{ textAlign: 'center' }}>Créer un compte</h2>
+      <div className="register-page__container">
+        <form onSubmit={handleRegister} className="register-page__form">
+          <h2 className="register-page__title">Créer un compte</h2>
 
-            {errorMsg && <p style={{ color: '#f87171' }}>{errorMsg}</p>}
+          {errorMsg && (
+            <p className="register-page__error">{errorMsg}</p>
+          )}
 
-            <label>Prénom</label>
+          <div className="register-page__field-group">
+            <label className="register-page__label">Prénom</label>
             <input
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
-              style={inputStyle}
+              className="register-page__input"
             />
+          </div>
 
-            <label>Nom</label>
+          <div className="register-page__field-group">
+            <label className="register-page__label">Nom</label>
             <input
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
-              style={inputStyle}
+              className="register-page__input"
             />
+          </div>
 
-            <label>Pseudo</label>
+          <div className="register-page__field-group">
+            <label className="register-page__label">Pseudo</label>
             <input
               type="text"
               value={pseudo}
               onChange={(e) => setPseudo(e.target.value)}
               required
-              style={inputStyle}
+              className="register-page__input"
             />
+          </div>
 
-            <label>Âge</label>
+          <div className="register-page__field-group">
+            <label className="register-page__label">Âge</label>
             <input
               type="number"
               value={age}
               min={18}
               onChange={(e) => setAge(Number(e.target.value))}
               required
-              style={inputStyle}
+              className="register-page__input"
             />
+          </div>
 
-            <label>Email</label>
+          <div className="register-page__field-group">
+            <label className="register-page__label">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              style={inputStyle}
+              className="register-page__input"
             />
+          </div>
 
-            <label>Mot de passe</label>
+          <div className="register-page__field-group">
+            <label className="register-page__label">Mot de passe</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              style={inputStyle}
+              className="register-page__input"
             />
+          </div>
 
-            <button type="submit" style={buttonStyle}>
-              S'inscrire
-            </button>
+          <button type="submit" className="register-page__submit-btn">
+            S'inscrire
+          </button>
 
-            <button
-              type="button"
-              onClick={() => navigate('/')}
-              style={{
-                marginTop: '0.5rem',
-                padding: '0.6rem 1.5rem',
-                fontSize: '0.95rem',
-                background: 'none',
-                border: '1px solid #64748b',
-                color: '#94a3b8',
-                borderRadius: '0.5rem',
-                cursor: 'pointer',
-              }}
-            >
-              ← Retour à l'accueil
-            </button>
-          </form>
-        </div>
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="register-page__back-btn"
+          >
+            ← Retour à l'accueil
+          </button>
+        </form>
       </div>
-    </>
+    </div>
   );
 }
-
-const inputStyle = {
-  width: '100%',
-  padding: '0.75rem',
-  borderRadius: '0.5rem',
-  border: '1px solid #475569',
-  background: '#0f172a',
-  color: 'white',
-};
-
-const buttonStyle = {
-  width: '100%',
-  padding: '0.75rem',
-  background: 'linear-gradient(to right, #6366f1, #3b82f6)',
-  border: 'none',
-  borderRadius: '0.5rem',
-  color: 'white',
-  fontWeight: '600',
-  cursor: 'pointer',
-};
