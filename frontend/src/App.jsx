@@ -10,6 +10,8 @@ import RedeemPage from './pages/RedeemPage';
 import PaymentPage from './pages/PaymentPage';
 import ConfirmPage from './pages/ConfirmPage';
 import { PrivateRoute, PublicOnlyRoute } from './RouteGuards';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Analytics } from "@vercel/analytics/next";
 
 export default function App() {
   return (
@@ -83,6 +85,9 @@ export default function App() {
         {/* Redirection en cas de route inconnue */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      {/* Intégration de Vercel Speed Insights */}
+      <SpeedInsights />
+      <Analytics />
     </Router>
   );
 }
