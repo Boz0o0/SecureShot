@@ -3,9 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import supabase from '../services/supabaseClient';
 import toast, { Toaster } from 'react-hot-toast';
+import UserMenu from '../components/UserMenu.jsx';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
+
+import '../styles/pages/DashboardPage.css';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -99,64 +102,49 @@ export default function DashboardPage() {
   const pseudo = user.user_metadata?.pseudo || 'utilisateur';
 
   return (
-    <div style={{ position: 'relative', zIndex: 0 }}>
+    <div className="dashboard-page">
       <Toaster position="top-center" />
 
-      {/* Background */}
-      <div
-        style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'linear-gradient(135deg, #0f0f0f, #1e293b)',
-          zIndex: -1,
-        }}
-      >
-        <div style={{ position: 'absolute', top: '-100px', left: '-100px', width: '300px', height: '300px', backgroundColor: '#3b82f6', opacity: 0.1, transform: 'rotate(45deg)', borderRadius: '2rem', filter: 'blur(80px)' }} />
-        <div style={{ position: 'absolute', bottom: '-120px', right: '-120px', width: '350px', height: '350px', backgroundColor: '#ec4899', opacity: 0.1, transform: 'rotate(-30deg)', borderRadius: '1rem', filter: 'blur(100px)' }} />
-        <div style={{ position: 'absolute', top: '50%', left: '50%', width: '100px', height: '100px', backgroundColor: '#10b981', opacity: 0.1, transform: 'translate(-50%, -50%) rotate(15deg)', borderRadius: '50%', filter: 'blur(50px)' }} />
+      {/* Navbar utilisateur en haut à droite */}
+      <div className="dashboard-navbar">
+        <UserMenu />
       </div>
 
-      <div style={{ padding: '2rem', color: 'white', fontFamily: 'system-ui, sans-serif' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📁 Mon Espace</h1>
-        <p style={{ fontSize: '1.2rem', marginBottom: '2rem', color: '#9ca3af' }}>
+      {/* Background */}
+      <div className="dashboard-background">
+        <div className="bg-blue-blur" />
+        <div className="bg-pink-blur" />
+        <div className="bg-green-blur" />
+      </div>
+
+      <div className="dashboard-content">
+        <h1 className="dashboard-title">📁 Mon Espace</h1>
+        <p className="dashboard-greeting">
           Bonjour <strong>{pseudo}</strong> ! Voici un aperçu de votre activité :
         </p>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '1.5rem',
-          marginBottom: '3rem'
-        }}>
+        <div className="dashboard-stats-grid">
           <StatCard title="📸 Photos mises en ligne" value={stats.photos} />
           <StatCard title="🛒 Ventes" value={stats.ventes} />
           <StatCard title="💰 Revenus (€)" value={stats.revenus.toFixed(2)} />
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
-          <button onClick={() => navigate('/upload')} style={actionButtonStyle}>
+        <div className="dashboard-action-buttons">
+          <button onClick={() => navigate('/upload')} className="action-button">
             ➕ Ajouter une photo
           </button>
-          <button onClick={() => navigate('/gallery')} style={actionButtonStyle}>
+          <button onClick={() => navigate('/gallery')} className="action-button">
             🌐 Voir la galerie
           </button>
         </div>
 
         {/* Sélecteur de période */}
-        <div style={{ marginBottom: '1.5rem', color: 'white', fontWeight: '600', fontSize: '1.1rem' }}>
+        <div className="dashboard-period-select">
           Période :{' '}
           <select
             value={period}
             onChange={e => setPeriod(Number(e.target.value))}
-            style={{
-              backgroundColor: '#1f2937',
-              border: '1px solid #334155',
-              color: 'white',
-              borderRadius: '0.5rem',
-              padding: '0.25rem 0.5rem',
-              fontSize: '1rem',
-              cursor: 'pointer'
-            }}
+            className="period-select"
           >
             <option value={7}>7 jours</option>
             <option value={30}>30 jours</option>
@@ -166,7 +154,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Graphiques */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', flexWrap: 'wrap' }}>
+        <div className="dashboard-charts-grid">
           <ChartCard title="💸 Revenus journaliers (€)">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={filteredSalesData}>
@@ -198,41 +186,18 @@ export default function DashboardPage() {
 
 function StatCard({ title, value }) {
   return (
-    <div style={{
-      background: '#1f2937',
-      borderRadius: '0.75rem',
-      padding: '1.5rem',
-      border: '1px solid #334155',
-      textAlign: 'center'
-    }}>
-      <div style={{ fontSize: '1rem', marginBottom: '0.5rem', color: '#9ca3af' }}>{title}</div>
-      <div style={{ fontSize: '1.75rem', fontWeight: '700' }}>{value}</div>
+    <div className="stat-card">
+      <div className="stat-title">{title}</div>
+      <div className="stat-value">{value}</div>
     </div>
   );
 }
 
 function ChartCard({ title, children }) {
   return (
-    <div style={{
-      background: '#1f2937',
-      borderRadius: '0.75rem',
-      padding: '1rem',
-      border: '1px solid #334155',
-      color: 'white'
-    }}>
-      <div style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: '600', color: '#9ca3af' }}>{title}</div>
+    <div className="chart-card">
+      <div className="chart-title">{title}</div>
       {children}
     </div>
   );
 }
-
-const actionButtonStyle = {
-  background: 'linear-gradient(to right, #6366f1, #3b82f6)',
-  border: 'none',
-  color: 'white',
-  padding: '0.75rem 1.5rem',
-  borderRadius: '0.75rem',
-  cursor: 'pointer',
-  fontSize: '1rem',
-  fontWeight: '500',
-};

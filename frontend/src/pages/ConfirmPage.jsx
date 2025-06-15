@@ -2,6 +2,8 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import supabase from '../services/supabaseClient';
 import toast, { Toaster } from 'react-hot-toast';
+import UserMenu from '../components/UserMenu';
+import '../styles/pages/ConfirmPage.css'; // Ajoute ici ton CSS spécifique ConfirmPage
 
 export default function ConfirmPage() {
   const [searchParams] = useSearchParams();
@@ -10,7 +12,6 @@ export default function ConfirmPage() {
   const storagePath = searchParams.get('storage_path');
 
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -82,12 +83,6 @@ export default function ConfirmPage() {
     buyPhotoAndDelete();
   }, [photoId, storagePath, user]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.reload();
-  };
-
-  // Nouvelle fonction pour forcer téléchargement
   const handleDownload = async () => {
     if (!imageUrl) {
       toast.error("URL de l'image introuvable.");
@@ -101,7 +96,7 @@ export default function ConfirmPage() {
 
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'photo.jpg'; // nom du fichier téléchargé, tu peux personnaliser
+      a.download = 'photo.jpg';
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -113,169 +108,44 @@ export default function ConfirmPage() {
   };
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        zIndex: 0,
-        fontFamily: 'system-ui, sans-serif',
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        overflow: 'hidden',
-        padding: '2rem',
-        textAlign: 'center',
-      }}
-    >
+    <div className="confirm-page-container">
       <Toaster position="top-center" />
 
-      <div
-        style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'linear-gradient(135deg, #0f0f0f, #1f2937)',
-          zIndex: -1,
-          overflow: 'hidden',
-        }}
-      >
-        <div style={blurBox('#3b82f6', '-100px', '-100px', '300px', '300px', 80)} />
-        <div style={blurBox('#ec4899', '-120px', '-120px', '350px', '350px', 100)} />
-        <div style={blurBox('#10b981', '50%', '50%', '100px', '100px', 50, true)} />
+      <div className="background-blur">
+        <div className="blur-blue" />
+        <div className="blur-pink" />
+        <div className="blur-green" />
       </div>
 
-      <button onClick={() => navigate('/')} style={navButtonStyle}>
+      <button onClick={() => navigate('/')} className="nav-button">
         ⬅ Menu principal
       </button>
 
       {user && (
-        <div style={{ position: 'absolute', top: '1.5rem', right: '2rem', zIndex: 10 }}>
-          <button
-            onClick={() => setOpen(!open)}
-            style={{
-              fontSize: '1.3rem',
-              background: 'none',
-              border: 'none',
-              color: 'white',
-              cursor: 'pointer',
-            }}
-            title="Menu utilisateur"
-          >
-            👤
-          </button>
-
-          {open && (
-            <div style={userMenuStyle}>
-              <button onClick={() => { setOpen(false); navigate('/settings'); }} style={menuItemStyle}>Paramètres</button>
-              <button onClick={() => { setOpen(false); navigate('/dashboard'); }} style={menuItemStyle}>Dashboard</button>
-              <button onClick={handleLogout} style={{ ...menuItemStyle, color: '#f87171', borderTop: '1px solid #374151' }}>Déconnexion</button>
-            </div>
-          )}
+        <div className="user-menu-position">
+          <UserMenu />
         </div>
       )}
 
-      <h1 style={{ fontSize: '2.5rem', fontWeight: 700, color: '#e5e7eb' }}>
-        ✅ Paiement réussi !
-      </h1>
-      <p style={{ fontSize: '1.1rem', color: '#d1d5db', maxWidth: '500px' }}>
+      <h1 className="confirm-title">✅ Paiement réussi !</h1>
+      <p className="confirm-text">
         Merci pour votre achat. Vous pouvez maintenant accéder à votre photo :
       </p>
 
-      <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
+      <div className="confirm-actions">
         <a
           href={imageUrl}
           target="_blank"
           rel="noopener noreferrer"
-          style={viewButtonStyle}
+          className="view-button"
         >
           Voir l’image
         </a>
 
-        <button onClick={handleDownload} style={downloadButtonStyle}>
+        <button onClick={handleDownload} className="download-button">
           Télécharger l’image
         </button>
       </div>
     </div>
   );
 }
-
-const navButtonStyle = {
-  position: 'absolute',
-  top: '1.5rem',
-  left: '2rem',
-  padding: '0.5rem 1rem',
-  fontSize: '0.95rem',
-  background: 'none',
-  border: '1px solid #6366f1',
-  color: '#6366f1',
-  borderRadius: '0.5rem',
-  cursor: 'pointer',
-  zIndex: 10,
-};
-
-const menuItemStyle = {
-  width: '100%',
-  padding: '0.75rem 1rem',
-  background: 'none',
-  border: 'none',
-  textAlign: 'left',
-  color: 'white',
-  fontSize: '0.95rem',
-  cursor: 'pointer',
-};
-
-const userMenuStyle = {
-  position: 'absolute',
-  top: '2.5rem',
-  right: 0,
-  background: '#1f2937',
-  border: '1px solid #374151',
-  borderRadius: '0.5rem',
-  overflow: 'hidden',
-  minWidth: '150px',
-  boxShadow: '0 8px 20px rgba(0,0,0,0.2)',
-};
-
-const viewButtonStyle = {
-  padding: '1rem 2rem',
-  fontSize: '1.1rem',
-  fontWeight: 600,
-  background: 'linear-gradient(to right, #10b981, #22c55e)',
-  color: 'white',
-  borderRadius: '0.75rem',
-  textDecoration: 'none',
-  boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
-  transition: 'all 0.3s ease',
-};
-
-const downloadButtonStyle = {
-  padding: '1rem 2rem',
-  fontSize: '1.1rem',
-  fontWeight: 600,
-  background: 'linear-gradient(to right, #6366f1, #818cf8)',
-  color: 'white',
-  borderRadius: '0.75rem',
-  border: 'none',
-  cursor: 'pointer',
-  boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
-  transition: 'all 0.3s ease',
-};
-
-downloadButtonStyle[':hover'] = {
-  background: 'linear-gradient(to right, #818cf8, #6366f1)',
-};
-
-const blurBox = (color, top, left, w, h, blur, center = false) => ({
-  position: 'absolute',
-  top,
-  left,
-  width: w,
-  height: h,
-  backgroundColor: color,
-  opacity: 0.1,
-  transform: center
-    ? 'translate(-50%, -50%) rotate(15deg)'
-    : 'rotate(45deg)',
-  borderRadius: '2rem',
-  filter: `blur(${blur}px)`,
-});
