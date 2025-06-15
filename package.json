@@ -10,11 +10,19 @@
     "build:frontend": "cd frontend && npm run build",
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install"
   },
-  "keywords": ["photography", "ecommerce", "paypal", "supabase"],
+  "keywords": [
+    "photography",
+    "ecommerce",
+    "paypal",
+    "supabase"
+  ],
   "author": "Enzo Laugel",
   "license": "MIT",
   "workspaces": [
     "backend",
     "frontend"
-  ]
+  ],
+  "dependencies": {
+    "@vercel/speed-insights": "^1.2.0"
+  }
 }

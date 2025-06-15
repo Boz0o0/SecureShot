@@ -85,9 +85,7 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {/* Intégration de Vercel Speed Insights */}
-      <div>
-          <SpeedInsights />
-      </div>
+      <SpeedInsights />
     </Router>
   );
 }
